@@ -1,14 +1,15 @@
 {
   "expo": {
-    "name": "zarfim-temp",
-    "slug": "zarfim-temp",
+    "name": "Zarfım",
+    "slug": "zarfim",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "zarfimtemp",
+    "scheme": "zarfim",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.zarfim.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -17,6 +18,7 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "package": "com.zarfim.app",
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -31,9 +33,13 @@
         {
           "image": "./assets/images/splash-icon.png",
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#1C2541"
         }
-      ]
+      ],
+      "expo-font",
+      "expo-secure-store",
+      "expo-localization",
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": true
