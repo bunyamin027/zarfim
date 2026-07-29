@@ -1,5 +1,5 @@
 /**
- * Raporlar Ekranı — Grafik ve İstatistikler (Victory Native XL)
+ * Raporlar Ekranı — Grafik ve İstatistikler (Victory Native XL + PDF/CSV Dışa Aktarma)
  */
 import React, { useMemo, useState } from 'react';
 import {
@@ -15,13 +15,14 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import * as Print from 'expo-print';
 import { Pie, PolarChart } from 'victory-native';
 import { CartesianChart, Line } from 'victory-native';
 
 import { Colors, Fonts, FontSizes, Spacing, BorderRadius, Shadows } from '@/lib/theme';
 import { useAuthStore } from '@/store/auth';
 import { useSubscriptionStore } from '@/store/subscription';
-import { useTransactions, Transaction } from '@/lib/hooks/useTransactions';
+import { useTransactions } from '@/lib/hooks/useTransactions';
 import { formatCurrency } from '@/lib/formatCurrency';
 import PrimaryButton from '@/components/PrimaryButton';
 import { isRTL } from '@/lib/i18n';
@@ -31,16 +32,17 @@ export default function ReportsScreen() {
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const isPremium = useSubscriptionStore((s) => s.isPremium);
-  
-  const { data: transactions, isLoading, isError } = useTransactions(isPremium);
-  const [isExporting, setIsExporting] = useState(false);
+
+  const { data: transactions, isLoading } = useTransactions(isPremium);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [isExportingCsv, setIsExportingCsv] = useState(false);
 
   // Kategori Dağılımı Verisi (Donut)
   const pieData = useMemo(() => {
     if (!transactions || transactions.length === 0) return [];
-    
+
     const aggregated: Record<string, { value: number; color: string; label: string }> = {};
-    
+
     transactions.forEach((tx) => {
       if (!aggregated[tx.envelope_id]) {
         aggregated[tx.envelope_id] = {
@@ -60,9 +62,8 @@ export default function ReportsScreen() {
     if (!transactions || transactions.length === 0) return [];
 
     const dailyTotals: Record<string, number> = {};
-    
+
     transactions.forEach((tx) => {
-      // YYYY-MM-DD
       const day = new Date(tx.date).toISOString().split('T')[0];
       dailyTotals[day] = (dailyTotals[day] || 0) + tx.amount;
     });
@@ -70,12 +71,111 @@ export default function ReportsScreen() {
     const sortedDays = Object.keys(dailyTotals).sort();
     return sortedDays.map((day) => ({
       day,
-      // Sadece günü göster (örn: "15" veya "15 Eyl")
       label: new Date(day).getDate().toString(),
       total: dailyTotals[day],
     }));
   }, [transactions]);
 
+  // 📄 PDF Dışa Aktarma
+  const handleExportPDF = async () => {
+    if (!isPremium) {
+      router.push('/paywall');
+      return;
+    }
+
+    if (!transactions || transactions.length === 0) return;
+
+    try {
+      setIsExportingPdf(true);
+
+      const totalSpent = transactions.reduce((sum, tx) => sum + tx.amount, 0);
+      const isArabic = isRTL();
+
+      const tableRows = transactions
+        .map((tx) => {
+          const dateStr = new Date(tx.date).toLocaleDateString(isArabic ? 'ar-SA' : 'tr-TR');
+          const envelopeName = tx.envelope_name_key ? t(tx.envelope_name_key) : tx.envelope_name;
+          const note = tx.note || '-';
+          const amountStr = formatCurrency(tx.amount);
+          return `
+            <tr>
+              <td>${dateStr}</td>
+              <td>${envelopeName}</td>
+              <td>${note}</td>
+              <td style="font-weight: bold; color: #C1442D;">${amountStr}</td>
+            </tr>
+          `;
+        })
+        .join('');
+
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html dir="${isArabic ? 'rtl' : 'ltr'}">
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 30px; background-color: #ffffff; color: #1C2541; }
+            .header { text-align: center; margin-bottom: 25px; border-bottom: 3px solid #C1442D; padding-bottom: 15px; }
+            .title { font-size: 26px; margin: 0; color: #1C2541; }
+            .subtitle { font-size: 14px; color: #6F8F6A; margin-top: 5px; }
+            .summary-box { background-color: #EFE6D3; border-radius: 8px; padding: 15px 20px; margin-bottom: 25px; text-align: center; }
+            .summary-title { font-size: 14px; color: #1C2541; }
+            .summary-val { font-size: 24px; font-weight: bold; color: #C1442D; margin-top: 4px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            th { background-color: #1C2541; color: #ffffff; text-align: ${isArabic ? 'right' : 'left'}; padding: 12px; font-size: 14px; }
+            td { padding: 10px 12px; border-bottom: 1px solid #EFE6D3; font-size: 13px; text-align: ${isArabic ? 'right' : 'left'}; }
+            tr:nth-child(even) { background-color: #F8F6F0; }
+            .footer { margin-top: 40px; text-align: center; font-size: 11px; color: #888888; border-top: 1px solid #eeeeee; padding-top: 15px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1 class="title">📬 Zarfım — Harcama Raporu</h1>
+            <div class="subtitle">${new Date().toLocaleDateString(isArabic ? 'ar-SA' : 'tr-TR', { month: 'long', year: 'numeric' })}</div>
+          </div>
+          <div class="summary-box">
+            <div class="summary-title">${t('dashboard.spent')}</div>
+            <div class="summary-val">${formatCurrency(totalSpent)}</div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Tarih</th>
+                <th>Zarf</th>
+                <th>Not / İşyeri</th>
+                <th>Tutar</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tableRows}
+            </tbody>
+          </table>
+          <div class="footer">
+            Zarfım Bütçe Uygulaması ile oluşturuldu • kahramanapp.com
+          </div>
+        </body>
+        </html>
+      `;
+
+      const { uri } = await Print.printToFileAsync({ html: htmlContent });
+
+      const isSharingAvailable = await Sharing.isAvailableAsync();
+      if (isSharingAvailable) {
+        await Sharing.shareAsync(uri, {
+          mimeType: 'application/pdf',
+          dialogTitle: t('reports.exportPdf'),
+          UTI: 'com.adobe.pdf',
+        });
+      }
+    } catch (error) {
+      console.error('Export PDF failed:', error);
+      Alert.alert(t('common.error'), t('reports.exportErrorMsg'));
+    } finally {
+      setIsExportingPdf(false);
+    }
+  };
+
+  // 📊 CSV Dışa Aktarma
   const handleExportCSV = async () => {
     if (!isPremium) {
       router.push('/paywall');
@@ -85,16 +185,17 @@ export default function ReportsScreen() {
     if (!transactions || transactions.length === 0) return;
 
     try {
-      setIsExporting(true);
-      
+      setIsExportingCsv(true);
+
       const header = 'Tarih,Zarf,Tutar,Not\n';
-      const rows = transactions.map(tx => {
-        const dateStr = new Date(tx.date).toLocaleDateString();
-        const envelopeName = tx.envelope_name_key ? t(tx.envelope_name_key) : tx.envelope_name;
-        const note = tx.note || '';
-        // CSV Injection koruması ve virgülleri kaçırma (escape)
-        return `"${dateStr}","${envelopeName}","${tx.amount}","${note.replace(/"/g, '""')}"`;
-      }).join('\n');
+      const rows = transactions
+        .map((tx) => {
+          const dateStr = new Date(tx.date).toLocaleDateString();
+          const envelopeName = tx.envelope_name_key ? t(tx.envelope_name_key) : tx.envelope_name;
+          const note = tx.note || '';
+          return `"${dateStr}","${envelopeName}","${tx.amount}","${note.replace(/"/g, '""')}"`;
+        })
+        .join('\n');
 
       const csvContent = header + rows;
       const fileName = `zarfim_export_${new Date().getTime()}.csv`;
@@ -113,10 +214,10 @@ export default function ReportsScreen() {
         });
       }
     } catch (error) {
-      console.error('Export failed:', error);
+      console.error('Export CSV failed:', error);
       Alert.alert(t('common.error'), t('reports.exportErrorMsg'));
     } finally {
-      setIsExporting(false);
+      setIsExportingCsv(false);
     }
   };
 
@@ -183,12 +284,9 @@ export default function ReportsScreen() {
               valueKey={"value"}
               labelKey={"label"}
             >
-              <Pie.Chart 
-                innerRadius={60}
-              />
+              <Pie.Chart innerRadius={60} />
             </PolarChart>
-            
-            {/* Ortadaki Toplam Tutar Yazısı */}
+
             <View style={styles.pieCenterContent}>
               <Text style={styles.pieCenterText}>
                 {formatCurrency(transactions.reduce((sum, tx) => sum + tx.amount, 0))}
@@ -196,7 +294,6 @@ export default function ReportsScreen() {
             </View>
           </View>
 
-          {/* Özel Lejant */}
           <View style={[styles.legendContainer, isRTL() && styles.rtlRow]}>
             {pieData.map((item, index) => (
               <View key={index} style={[styles.legendItem, isRTL() && styles.rtlRow]}>
@@ -219,17 +316,17 @@ export default function ReportsScreen() {
                 yKeys={["total"]}
                 domainPadding={{ top: 20, bottom: 20, left: 20, right: 20 }}
                 axisOptions={{
-                  font: undefined, // Type warning bypass
+                  font: undefined,
                   tickCount: { x: Math.min(lineData.length, 5), y: 4 },
                   lineColor: Colors.paperDark,
                   labelColor: Colors.inkLight,
                 }}
               >
                 {({ points }) => (
-                  <Line 
-                    points={points.total} 
-                    color={Colors.sage} 
-                    strokeWidth={3} 
+                  <Line
+                    points={points.total}
+                    color={Colors.sage}
+                    strokeWidth={3}
                     curveType="monotoneX"
                   />
                 )}
@@ -242,13 +339,20 @@ export default function ReportsScreen() {
           </View>
         </View>
 
-        {/* Dışa Aktarma Butonu */}
+        {/* Dışa Aktarma Butonları */}
         <View style={styles.exportContainer}>
           <PrimaryButton
-            title={isExporting ? t('reports.exporting') : t('reports.exportCsv')}
-            icon={isExporting ? '⏳' : isPremium ? '📥' : '🔒'}
-            onPress={handleExportCSV}
+            title={isExportingPdf ? t('reports.exportingPdf') : t('reports.exportPdf')}
+            icon={isExportingPdf ? '⏳' : isPremium ? '📄' : '🔒'}
+            onPress={handleExportPDF}
             style={!isPremium ? styles.lockedButton : undefined}
+          />
+          <View style={{ height: Spacing.sm }} />
+          <PrimaryButton
+            title={isExportingCsv ? t('reports.exporting') : t('reports.exportCsv')}
+            icon={isExportingCsv ? '⏳' : isPremium ? '📊' : '🔒'}
+            onPress={handleExportCSV}
+            style={!isPremium ? styles.lockedButton : { backgroundColor: Colors.inkLight }}
           />
         </View>
       </ScrollView>
