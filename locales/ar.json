@@ -27,12 +27,13 @@
     "title": "📬 مظروفي",
     "myEnvelopes": "مظاريفي",
     "addExpense": "إضافة مصروف",
+    "addEnvelope": "+ إضافة مظروف جديد",
     "totalBudget": "إجمالي الميزانية",
     "spent": "المصروف",
     "remaining": "المتبقي",
     "over": "تجاوز",
     "loadingEnvelopes": "جارٍ تحميل المظاريف...",
-    "loadError": "⚠️ تعذّر تحميل البيانات. يتم عرض بيانات تجريبية.",
+    "loadError": "⚠️ تعذّر تحميل البيانات. يتم عرض بيانات محليّة.",
     "used": "مستخدم",
     "emptyStateTitle": "ابدأ بإدارة ميزانيتك!",
     "emptyStateDesc": "ليس لديك أي مظاريف بعد. قم بإنشاء أول مظروف لك للسيطرة على نفقاتك."
@@ -44,6 +45,40 @@
     "transport": "المواصلات",
     "entertainment": "الترفيه",
     "bills": "الفواتير"
+  },
+  "addExpenseModal": {
+    "title": "💸 إضافة مصروف",
+    "selectEnvelope": "اختر المظروف",
+    "amount": "المبلغ",
+    "amountPlaceholder": "0.00",
+    "note": "ملاحظة / المتجر (اختياري)",
+    "notePlaceholder": "مثال: تسوق المخبز",
+    "submit": "حفظ المصروف",
+    "fillAll": "يرجى اختيار مظروف وإدخال مبلغ صحيح.",
+    "success": "تمت إضافة المصروف بنجاح!"
+  },
+  "addEnvelopeModal": {
+    "title": "✉️ إنشاء مظروف جديد",
+    "editTitle": "✏️ تعديل المظروف",
+    "name": "اسم المظروف",
+    "namePlaceholder": "مثال: الإيجار، السفر، المطاعم",
+    "limit": "حد الميزانية الشهرية",
+    "limitPlaceholder": "0.00",
+    "icon": "أيقونة المظروف",
+    "color": "لون المظروف",
+    "submit": "إنشاء المظروف",
+    "submitEdit": "حفظ التغييرات",
+    "fillAll": "يرجى إدخال اسم المظروف وحد ميزانية صحيح.",
+    "limitReachedTitle": "🔒 حد المظاريف المجاني",
+    "limitReachedMsg": "يمكنك إنشاء حتى ٣ مظاريف في الخطة المجانية. اشترك في بريميوم لإنشاء مظاريف غير محدودة!"
+  },
+  "envelopeDetail": {
+    "title": "تفاصيل المظروف",
+    "transactions": "سجل المعاملات",
+    "noTransactions": "لا توجد مصاريف مضافة لهذا المظروف بعد.",
+    "deleteTransactionConfirm": "هل أنت متأكد أنك تريد حذف هذا المصروف؟",
+    "deleteEnvelopeConfirm": "هل أنت متأكد أنك تريد حذف هذا المظروف وجميع مصاريفه؟",
+    "addExpenseForThis": "+ إضافة مصروف لهذا المظروف"
   },
   "locked": {
     "rentTracking": "تتبع الإيجار",
@@ -129,7 +164,12 @@
     "restoreSuccessMsg": "تم استعادة عضوية بريميوم بنجاح!",
     "languageChangeTitle": "تغيير اللغة",
     "languageChangeMsg": "تغيير اللغة يتطلب إعادة تشغيل التطبيق.",
-    "restart": "إعادة التشغيل"
+    "restart": "إعادة التشغيل",
+    "legal": "قانوني",
+    "termsOfUse": "شروط الاستخدام (EULA)",
+    "support": "الدعم والملحوظات",
+    "developer": "المطور",
+    "website": "الموقع الإلكتروني"
   },
   "reports": {
     "title": "التقارير",

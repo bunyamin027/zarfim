@@ -128,6 +128,28 @@ function RootLayoutNav() {
           gestureEnabled: true,
         }}
       />
+      <Stack.Screen
+        name="add-expense"
+        options={{
+          presentation: 'modal',
+          headerShown: false,
+          gestureEnabled: true,
+        }}
+      />
+      <Stack.Screen
+        name="add-envelope"
+        options={{
+          presentation: 'modal',
+          headerShown: false,
+          gestureEnabled: true,
+        }}
+      />
+      <Stack.Screen
+        name="envelope/[id]"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

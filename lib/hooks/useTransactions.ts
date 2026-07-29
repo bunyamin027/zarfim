@@ -3,8 +3,9 @@
  * Grafikler ve CSV dışa aktarma için kullanılır.
  */
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { useAuthStore } from '@/store/auth';
+import { useEnvelopesStore } from '@/store/envelopes';
 
 export interface Transaction {
   id: string;
@@ -12,7 +13,6 @@ export interface Transaction {
   amount: number;
   date: string;
   note: string | null;
-  // Join ile gelen zarf detayları:
   envelope_name: string;
   envelope_name_key: string | null;
   envelope_color: string;
@@ -21,11 +21,38 @@ export interface Transaction {
 
 export function useTransactions(isPremium: boolean) {
   const user = useAuthStore((s) => s.user);
+  const storeTransactions = useEnvelopesStore((s) => s.transactions);
+  const storeEnvelopes = useEnvelopesStore((s) => s.envelopes);
 
   return useQuery({
-    queryKey: ['transactions', user?.id, isPremium],
+    queryKey: ['transactions', user?.id, isPremium, storeTransactions, storeEnvelopes],
     queryFn: async () => {
-      if (!user) return [];
+      if (!isSupabaseConfigured || !user) {
+        let txs = [...storeTransactions];
+
+        // Free kullanıcılar için son 30 gün
+        if (!isPremium) {
+          const thirtyDaysAgo = Date.now() - 30 * 86400000;
+          txs = txs.filter((tx) => new Date(tx.occurred_at).getTime() >= thirtyDaysAgo);
+        }
+
+        return txs
+          .map((tx) => {
+            const env = storeEnvelopes.find((e) => e.id === tx.envelope_id);
+            return {
+              id: tx.id,
+              envelope_id: tx.envelope_id,
+              amount: Number(tx.amount),
+              date: tx.occurred_at,
+              note: tx.note,
+              envelope_name: env?.name || 'Bilinmeyen Zarf',
+              envelope_name_key: env?.nameKey || null,
+              envelope_color: env?.color || '#C1442D',
+              envelope_icon: env?.icon || '✉️',
+            } as Transaction;
+          })
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      }
 
       let query = supabase
         .from('transactions')
@@ -43,9 +70,8 @@ export function useTransactions(isPremium: boolean) {
           )
         `)
         .eq('user_id', user.id)
-        .order('date', { ascending: true }); // Trend grafiği için eskiden yeniye
+        .order('date', { ascending: true });
 
-      // Free kullanıcılar için sadece son 30 gün
       if (!isPremium) {
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -54,17 +80,34 @@ export function useTransactions(isPremium: boolean) {
 
       const { data, error } = await query;
 
-      if (error) {
-        console.error('Error fetching transactions:', error);
-        throw error;
+      if (error || !data) {
+        let txs = [...storeTransactions];
+        if (!isPremium) {
+          const thirtyDaysAgo = Date.now() - 30 * 86400000;
+          txs = txs.filter((tx) => new Date(tx.occurred_at).getTime() >= thirtyDaysAgo);
+        }
+
+        return txs.map((tx) => {
+          const env = storeEnvelopes.find((e) => e.id === tx.envelope_id);
+          return {
+            id: tx.id,
+            envelope_id: tx.envelope_id,
+            amount: Number(tx.amount),
+            date: tx.occurred_at,
+            note: tx.note,
+            envelope_name: env?.name || 'Bilinmeyen Zarf',
+            envelope_name_key: env?.nameKey || null,
+            envelope_color: env?.color || '#C1442D',
+            envelope_icon: env?.icon || '✉️',
+          } as Transaction;
+        });
       }
 
-      // Supabase'in nested yapısını düzleştir (flatten)
       return (data as any[]).map((row) => ({
         id: row.id,
         envelope_id: row.envelope_id,
-        amount: row.amount,
-        date: row.date,
+        amount: Number(row.amount),
+        date: row.date || row.occurred_at,
         note: row.note,
         envelope_name: row.envelopes?.name || 'Bilinmeyen Zarf',
         envelope_name_key: row.envelopes?.name_key,
@@ -72,6 +115,6 @@ export function useTransactions(isPremium: boolean) {
         envelope_icon: row.envelopes?.icon || '✉️',
       })) as Transaction[];
     },
-    enabled: !!user,
+    staleTime: 1000,
   });
 }

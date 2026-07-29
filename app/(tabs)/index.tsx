@@ -9,6 +9,7 @@ import {
   StyleSheet,
   SafeAreaView,
   ActivityIndicator,
+  Pressable,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -24,13 +25,40 @@ import SkeletonEnvelope from '@/components/SkeletonEnvelope';
 import { useAuthStore } from '@/store/auth';
 import { useSubscriptionStore } from '@/store/subscription';
 
+import { Alert } from 'react-native';
+
 export default function DashboardScreen() {
   const { t } = useTranslation();
   const { data: envelopes, isLoading, isError } = useEnvelopes();
   const stats = useMonthlyStats();
   const user = useAuthStore((s) => s.user);
   const isPremium = useSubscriptionStore((s) => s.isPremium);
+  const toggleSecretPremium = useSubscriptionStore((s) => s.toggleSecretPremium);
   const router = useRouter();
+
+  const [logoTapCount, setLogoTapCount] = React.useState(0);
+  const lastTapRef = React.useRef<number>(0);
+
+  const handleLogoTap = () => {
+    const now = Date.now();
+    if (now - lastTapRef.current < 800) {
+      const nextCount = logoTapCount + 1;
+      setLogoTapCount(nextCount);
+      if (nextCount >= 8) {
+        setLogoTapCount(0);
+        const newStatus = toggleSecretPremium();
+        Alert.alert(
+          '👑 Gizli Özellik!',
+          newStatus
+            ? 'Tebrikler! Zarfım Premium geliştirici modu aktifleştirildi! 🎉'
+            : 'Zarfım Premium varsayılan moda döndürüldü.'
+        );
+      }
+    } else {
+      setLogoTapCount(1);
+    }
+    lastTapRef.current = now;
+  };
 
   const mockEnvelopes = getMockEnvelopes();
   const mockSummary = getMockMonthlySummary();
@@ -59,7 +87,9 @@ export default function DashboardScreen() {
         ListHeaderComponent={
           <View style={styles.header}>
             <View style={styles.titleRow}>
-              <Text style={styles.title}>{t('dashboard.title')}</Text>
+              <Pressable onPress={handleLogoTap}>
+                <Text style={styles.title}>{t('dashboard.title')}</Text>
+              </Pressable>
               <Text style={styles.month}>{currentMonth}</Text>
             </View>
 
@@ -82,12 +112,15 @@ export default function DashboardScreen() {
             />
 
             <View style={styles.summaryRow}>
-              <View style={styles.summaryItem}>
+              <Pressable
+                style={styles.summaryItem}
+                onPress={() => router.push('/add-envelope')}
+              >
                 <Text style={styles.summaryValue}>
                   {formatCurrency(totalBudget)}
                 </Text>
-                <Text style={styles.summaryLabel}>{t('dashboard.totalBudget')}</Text>
-              </View>
+                <Text style={styles.summaryLabel}>{t('dashboard.totalBudget')} ✏️</Text>
+              </Pressable>
               <View style={styles.summaryDivider} />
               <View style={styles.summaryItem}>
                 <Text style={styles.summaryValue}>
@@ -118,7 +151,12 @@ export default function DashboardScreen() {
               </View>
             </View>
 
-            <Text style={styles.sectionTitle}>{t('dashboard.myEnvelopes')}</Text>
+            <View style={styles.sectionHeaderRow}>
+              <Text style={styles.sectionTitle}>{t('dashboard.myEnvelopes')}</Text>
+              <Pressable onPress={() => router.push('/add-envelope')}>
+                <Text style={styles.addEnvelopeText}>{t('dashboard.addEnvelope')}</Text>
+              </Pressable>
+            </View>
             
             {!isLoading && !isError && displayEnvelopes.length === 0 && (
               <View style={styles.emptyStateContainer}>
@@ -136,9 +174,8 @@ export default function DashboardScreen() {
             <PrimaryButton
               title={t('dashboard.addExpense')}
               icon="✏️"
-              onPress={() => {
-                console.log('Harcama Ekle tapped');
-              }}
+              onPress={() => router.push('/add-expense')}
+              style={styles.addExpenseButton}
             />
           </View>
         }
@@ -226,12 +263,22 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.paperDark,
     opacity: 0.3,
   },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    paddingHorizontal: Spacing.lg,
+    marginBottom: Spacing.md,
+  },
   sectionTitle: {
     fontFamily: Fonts.displayMedium,
     fontSize: FontSizes.xl,
     color: Colors.paper,
-    paddingHorizontal: Spacing.lg,
-    marginBottom: Spacing.md,
+  },
+  addEnvelopeText: {
+    fontFamily: Fonts.bodySemiBold,
+    fontSize: FontSizes.sm,
+    color: Colors.gold,
   },
   emptyStateContainer: {
     marginHorizontal: Spacing.lg,
@@ -266,5 +313,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.lg,
     alignItems: 'center',
+  },
+  addExpenseButton: {
+    width: '100%',
   },
 });

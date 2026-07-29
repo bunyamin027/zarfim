@@ -70,9 +70,7 @@ export default function AuthScreen() {
 
           {error && (
             <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>
-                {error.toLowerCase().includes('network') ? t('errors.network') : t('errors.auth')}
-              </Text>
+              <Text style={styles.errorText}>{error}</Text>
               <Pressable onPress={clearError}>
                 <Text style={styles.errorDismiss}>✕</Text>
               </Pressable>
@@ -140,18 +138,28 @@ export default function AuthScreen() {
 
         <View style={styles.socialContainer}>
           <Pressable
-            style={[styles.socialButton, styles.appleButton]}
-            onPress={signInWithApple}
-            disabled={isLoading}
+            style={({ pressed }) => [
+              styles.socialButton,
+              styles.appleButton,
+              (pressed || isLoading) && { opacity: 0.7 }
+            ]}
+            onPress={() => {
+              signInWithApple();
+            }}
           >
-            <Text style={styles.appleIcon}></Text>
+            <Text style={styles.appleIcon}></Text>
             <Text style={styles.appleText}>{t('auth.continueWithApple')}</Text>
           </Pressable>
 
           <Pressable
-            style={[styles.socialButton, styles.googleButton]}
-            onPress={signInWithGoogle}
-            disabled={isLoading}
+            style={({ pressed }) => [
+              styles.socialButton,
+              styles.googleButton,
+              (pressed || isLoading) && { opacity: 0.7 }
+            ]}
+            onPress={() => {
+              signInWithGoogle();
+            }}
           >
             <Text style={styles.googleIcon}>G</Text>
             <Text style={styles.googleText}>{t('auth.continueWithGoogle')}</Text>

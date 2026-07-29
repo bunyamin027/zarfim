@@ -31,6 +31,7 @@ interface SubscriptionState {
   checkSubscription: () => Promise<void>;
   purchase: (pkg: any) => Promise<boolean>;
   restore: () => Promise<boolean>;
+  toggleSecretPremium: () => boolean;
   clearError: () => void;
 }
 
@@ -174,6 +175,16 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
       });
       return false;
     }
+  },
+
+  toggleSecretPremium: () => {
+    const current = get().isPremium;
+    const nextState = !current;
+    set({
+      isPremium: nextState,
+      tier: nextState ? 'premium' : 'free',
+    });
+    return nextState;
   },
 
   clearError: () => set({ error: null }),

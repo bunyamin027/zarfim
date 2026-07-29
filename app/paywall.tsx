@@ -15,8 +15,9 @@ import {
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import * as WebBrowser from 'expo-web-browser';
 import { Colors, Fonts, FontSizes, Spacing, BorderRadius } from '@/lib/theme';
-import { isRevenueCatConfigured } from '@/lib/revenuecat';
+import { isRevenueCatConfigured, getMockPriceString } from '@/lib/revenuecat';
 import { useSubscriptionStore } from '@/store/subscription';
 import PrimaryButton from '@/components/PrimaryButton';
 
@@ -60,7 +61,7 @@ export default function PaywallScreen() {
 
   const offering = currentOffering;
   const monthlyPackage = offering?.monthly || offering?.availablePackages?.[0];
-  const priceString = monthlyPackage?.product?.priceString || mockOffering.product.priceString;
+  const priceString = monthlyPackage?.product?.priceString || getMockPriceString();
 
   const handlePurchase = async () => {
     if (!isRevenueCatConfigured) {
@@ -109,14 +110,21 @@ export default function PaywallScreen() {
           <Text style={styles.subtitle}>{t('paywall.subtitle')}</Text>
         </View>
 
-        <View style={styles.priceCard}>
+        <Pressable
+          style={({ pressed }) => [
+            styles.priceCard,
+            pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] }
+          ]}
+          onPress={handlePurchase}
+          disabled={purchasing || isLoading}
+        >
           <View style={styles.trialBadge}>
             <Text style={styles.trialText}>{t('paywall.trialBadge')}</Text>
           </View>
           <Text style={styles.price}>{priceString}</Text>
           <Text style={styles.priceDetail}>{t('common.perMonth')}</Text>
           <Text style={styles.priceNote}>{t('paywall.trialNote')}</Text>
-        </View>
+        </Pressable>
 
         <View style={styles.featuresContainer}>
           {FEATURE_KEYS.map((feature, index) => (
@@ -161,7 +169,9 @@ export default function PaywallScreen() {
           )}
         </View>
 
-        <Text style={styles.legal}>{t('paywall.legal')}</Text>
+        <Pressable onPress={() => WebBrowser.openBrowserAsync('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/')}>
+          <Text style={styles.legal}>{t('paywall.legal')}</Text>
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );

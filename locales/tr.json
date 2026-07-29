@@ -27,11 +27,13 @@
     "title": "📬 Zarfım",
     "myEnvelopes": "Zarflarım",
     "addExpense": "Harcama Ekle",
+    "addEnvelope": "+ Yeni Zarf Ekle",
     "totalBudget": "Toplam Bütçe",
     "spent": "Harcanan",
     "remaining": "Kalan",
     "over": "Aşım",
     "loadingEnvelopes": "Zarflar yükleniyor...",
+    "loadError": "⚠️ Veri yüklenemedi. Yerel veriler gösteriliyor.",
     "used": "kullanıldı",
     "emptyStateTitle": "Bütçeni Yönetmeye Başla!",
     "emptyStateDesc": "Henüz hiç zarfın yok. Harcamalarını kontrol altına almak için ilk zarfını oluştur."
@@ -43,6 +45,40 @@
     "transport": "Ulaşım",
     "entertainment": "Eğlence",
     "bills": "Faturalar"
+  },
+  "addExpenseModal": {
+    "title": "💸 Harcama Ekle",
+    "selectEnvelope": "Zarf Seçin",
+    "amount": "Tutar",
+    "amountPlaceholder": "0.00",
+    "note": "Not / İşyeri (İsteğe bağlı)",
+    "notePlaceholder": "Örn: Market alışverişi",
+    "submit": "Harcamayı Kaydet",
+    "fillAll": "Lütfen bir zarf seçin ve geçerli bir tutar girin.",
+    "success": "Harcama başarıyla eklendi!"
+  },
+  "addEnvelopeModal": {
+    "title": "✉️ Yeni Zarf Oluştur",
+    "editTitle": "✏️ Zarfı Düzenle",
+    "name": "Zarf Adı",
+    "namePlaceholder": "Örn: Kira, Tatil, Restoran",
+    "limit": "Aylık Bütçe Limiti",
+    "limitPlaceholder": "0.00",
+    "icon": "Zarf İkonu",
+    "color": "Zarf Rengi",
+    "submit": "Zarfı Oluştur",
+    "submitEdit": "Değişiklikleri Kaydet",
+    "fillAll": "Lütfen zarf adını ve geçerli bir bütçe limiti girin.",
+    "limitReachedTitle": "🔒 Ücretsiz Zarf Sınırı",
+    "limitReachedMsg": "Ücretsiz planda en fazla 3 zarf oluşturabilirsiniz. Sınırsız zarf oluşturmak için Premium'a yükseltin!"
+  },
+  "envelopeDetail": {
+    "title": "Zarf Detayı",
+    "transactions": "İşlem Geçmişi",
+    "noTransactions": "Bu zarfa ait henüz bir harcama yok.",
+    "deleteTransactionConfirm": "Bu harcamayı silmek istediğinize emin misiniz?",
+    "deleteEnvelopeConfirm": "Bu zarfı ve tüm harcama geçmişini silmek istediğinize emin misiniz?",
+    "addExpenseForThis": "+ Bu Zarfa Harcama Ekle"
   },
   "locked": {
     "rentTracking": "Kira Takibi",
@@ -128,7 +164,12 @@
     "restoreSuccessMsg": "Premium üyeliğiniz başarıyla geri yüklendi!",
     "languageChangeTitle": "Dil Değiştir",
     "languageChangeMsg": "Dil değişikliği uygulamanın yeniden başlatılmasını gerektirir.",
-    "restart": "Yeniden Başlat"
+    "restart": "Yeniden Başlat",
+    "legal": "Yasal",
+    "termsOfUse": "Kullanım Koşulları (EULA)",
+    "support": "Destek & Geri Bildirim",
+    "developer": "Geliştirici",
+    "website": "Web Sitesi"
   },
   "reports": {
     "title": "Raporlar",

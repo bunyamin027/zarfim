@@ -1,26 +1,12 @@
 /**
- * useEnvelopes — Zarf verileri için TanStack Query hook'ları
- *
- * Supabase'den kullanıcının zarflarını ve aylık harcama
- * istatistiklerini çeker.
+ * useEnvelopes — Zarf verileri için TanStack Query + Zustand Store hook'ları
  */
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { useAuthStore } from '@/store/auth';
+import { useEnvelopesStore, LocalEnvelope } from '@/store/envelopes';
 
-// ─── Tipler ───────────────────────────────────
-export interface Envelope {
-  id: string;
-  user_id: string;
-  household_id: string | null;
-  name: string;
-  icon: string;
-  monthly_limit: number;
-  color: string;
-  is_recurring: boolean;
-  sort_order: number;
-  created_at: string;
-  /** Bu ay harcanan toplam — join ile hesaplanır */
+export interface Envelope extends LocalEnvelope {
   spent: number;
 }
 
@@ -30,7 +16,6 @@ export interface MonthlyStats {
   envelopeCount: number;
 }
 
-// ─── Yardımcı: Bu ayın başlangıcı ───────────────
 function getMonthStart(): string {
   const now = new Date();
   return new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
@@ -41,14 +26,32 @@ function getMonthEnd(): string {
   return new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
 }
 
-// ─── Hook: Kullanıcının zarflarını çek ──────────
 export function useEnvelopes() {
   const user = useAuthStore((s) => s.user);
+  const storeEnvelopes = useEnvelopesStore((s) => s.envelopes);
+  const storeTransactions = useEnvelopesStore((s) => s.transactions);
 
   return useQuery<Envelope[]>({
-    queryKey: ['envelopes', user?.id],
+    queryKey: ['envelopes', user?.id, storeEnvelopes, storeTransactions],
     queryFn: async () => {
-      if (!user) return [];
+      // Supabase yapılandırılmamışsa veya user yoksa store'daki yerel veriyi kullan
+      if (!isSupabaseConfigured || !user) {
+        const monthStart = new Date(getMonthStart()).getTime();
+        const monthEnd = new Date(getMonthEnd()).getTime();
+
+        return storeEnvelopes.map((env) => {
+          const envTxs = storeTransactions.filter((tx) => {
+            const txTime = new Date(tx.occurred_at).getTime();
+            return tx.envelope_id === env.id && txTime >= monthStart && txTime <= monthEnd;
+          });
+          const spent = envTxs.reduce((sum, tx) => sum + Number(tx.amount), 0);
+
+          return {
+            ...env,
+            spent,
+          };
+        });
+      }
 
       const monthStart = getMonthStart();
       const monthEnd = getMonthEnd();
@@ -59,22 +62,37 @@ export function useEnvelopes() {
         .select('*')
         .order('sort_order', { ascending: true });
 
-      if (envError) throw envError;
-      if (!envelopes) return [];
+      if (envError) {
+        console.warn('Supabase fetch error, fallback to local store:', envError);
+        return storeEnvelopes.map((env) => {
+          const envTxs = storeTransactions.filter((tx) => tx.envelope_id === env.id);
+          return {
+            ...env,
+            spent: envTxs.reduce((sum, tx) => sum + Number(tx.amount), 0),
+          };
+        });
+      }
+
+      if (!envelopes || envelopes.length === 0) {
+        return storeEnvelopes.map((env) => {
+          const envTxs = storeTransactions.filter((tx) => tx.envelope_id === env.id);
+          return {
+            ...env,
+            spent: envTxs.reduce((sum, tx) => sum + Number(tx.amount), 0),
+          };
+        });
+      }
 
       // Her zarf için bu ayın harcamalarını topla
       const envelopeIds = envelopes.map((e) => e.id);
 
-      const { data: transactions, error: txError } = await supabase
+      const { data: transactions } = await supabase
         .from('transactions')
         .select('envelope_id, amount')
         .in('envelope_id', envelopeIds)
         .gte('occurred_at', monthStart)
         .lte('occurred_at', monthEnd);
 
-      if (txError) throw txError;
-
-      // Envelope başına harcama toplamı
       const spentMap: Record<string, number> = {};
       (transactions ?? []).forEach((tx) => {
         spentMap[tx.envelope_id] = (spentMap[tx.envelope_id] ?? 0) + Number(tx.amount);
@@ -86,11 +104,10 @@ export function useEnvelopes() {
         spent: spentMap[env.id] ?? 0,
       }));
     },
-    enabled: !!user,
+    staleTime: 1000,
   });
 }
 
-// ─── Hook: Aylık bütçe özeti ──────────────────
 export function useMonthlyStats() {
   const { data: envelopes } = useEnvelopes();
 
@@ -102,20 +119,25 @@ export function useMonthlyStats() {
 
   if (envelopes) {
     stats.envelopeCount = envelopes.length;
-    stats.totalBudget = envelopes.reduce((sum, e) => sum + e.monthly_limit, 0);
-    stats.totalSpent = envelopes.reduce((sum, e) => sum + e.spent, 0);
+    stats.totalBudget = envelopes.reduce((sum, e) => sum + Number(e.monthly_limit), 0);
+    stats.totalSpent = envelopes.reduce((sum, e) => sum + Number(e.spent), 0);
   }
 
   return stats;
 }
 
-// ─── Hook: Tek zarfın bu ayki işlemleri ──────────
 export function useEnvelopeTransactions(envelopeId: string) {
-  const user = useAuthStore((s) => s.user);
+  const storeTransactions = useEnvelopesStore((s) => s.transactions);
 
   return useQuery({
-    queryKey: ['transactions', envelopeId],
+    queryKey: ['transactions', envelopeId, storeTransactions],
     queryFn: async () => {
+      if (!isSupabaseConfigured) {
+        return storeTransactions
+          .filter((tx) => tx.envelope_id === envelopeId)
+          .sort((a, b) => new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime());
+      }
+
       const monthStart = getMonthStart();
       const monthEnd = getMonthEnd();
 
@@ -127,9 +149,13 @@ export function useEnvelopeTransactions(envelopeId: string) {
         .lte('occurred_at', monthEnd)
         .order('occurred_at', { ascending: false });
 
-      if (error) throw error;
+      if (error || !data) {
+        return storeTransactions
+          .filter((tx) => tx.envelope_id === envelopeId)
+          .sort((a, b) => new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime());
+      }
       return data ?? [];
     },
-    enabled: !!user && !!envelopeId,
+    staleTime: 1000,
   });
 }

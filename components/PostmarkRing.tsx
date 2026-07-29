@@ -37,6 +37,9 @@ export default function PostmarkRing({
       ? '#E8963A'
       : Colors.sage;
 
+  const remaining = totalBudget - totalSpent;
+  const isRemainingPositive = remaining >= 0;
+
   return (
     <View style={styles.container}>
       <Svg width={size} height={size}>
@@ -75,12 +78,21 @@ export default function PostmarkRing({
       </Svg>
 
       <View style={[styles.centerText, { width: size, height: size }]}>
-        <Text style={[styles.percentage, { color: progressColor }]}>
-          %{percentage}
+        <Text style={styles.label}>
+          {isRemainingPositive ? t('dashboard.remaining').toUpperCase() : t('dashboard.over').toUpperCase()}
         </Text>
-        <Text style={styles.label}>{t('dashboard.used')}</Text>
+        <Text
+          style={[
+            styles.percentage,
+            { color: isRemainingPositive ? Colors.sage : Colors.stamp, fontSize: FontSizes.xxl }
+          ]}
+          adjustsFontSizeToFit
+          numberOfLines={1}
+        >
+          {formatCurrency(Math.abs(remaining))}
+        </Text>
         <Text style={styles.amount}>
-          {formatCurrency(totalSpent)}
+          %{percentage} {t('dashboard.used')}
         </Text>
       </View>
     </View>

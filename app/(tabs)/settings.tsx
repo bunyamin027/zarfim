@@ -12,13 +12,16 @@ import {
   Alert,
   ActivityIndicator,
   Modal,
+  Linking,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import * as Updates from 'expo-updates';
+import * as WebBrowser from 'expo-web-browser';
 import { Colors, Fonts, FontSizes, Spacing, BorderRadius } from '@/lib/theme';
 import { useAuthStore } from '@/store/auth';
 import { useSubscriptionStore } from '@/store/subscription';
+import { getMockPriceString } from '@/lib/revenuecat';
 import {
   SUPPORTED_LANGUAGES,
   changeLanguage,
@@ -68,6 +71,7 @@ export default function SettingsScreen() {
   const { user, signOut } = useAuthStore();
   const { isPremium, isLoading, error, restore, clearError } = useSubscriptionStore();
   const [showLanguagePicker, setShowLanguagePicker] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
 
   const currentLang = getCurrentLanguage();
 
@@ -163,7 +167,7 @@ export default function SettingsScreen() {
           <SettingsRow
             icon="⭐"
             title={t('settings.upgradePremium')}
-            value="₺69,99"
+            value={getMockPriceString()}
             onPress={() => router.push('/paywall')}
           />
         )}
@@ -206,7 +210,30 @@ export default function SettingsScreen() {
         <SettingsRow
           icon="🔔"
           title={t('settings.notifications')}
-          value={t('settings.notificationsOn')}
+          value={notificationsEnabled ? t('settings.notificationsOn') : 'Kapalı'}
+          onPress={() => setNotificationsEnabled(!notificationsEnabled)}
+        />
+
+        <SettingsRow
+          icon="💬"
+          title={t('settings.support')}
+          value="kahramandev01@gmail.com"
+          onPress={() => Linking.openURL('mailto:kahramandev01@gmail.com')}
+        />
+        <SettingsRow
+          icon="🌐"
+          title={t('settings.developer')}
+          value="Kahramanapp"
+          onPress={() => WebBrowser.openBrowserAsync('https://kahramanapp.com')}
+        />
+
+        {/* Yasal */}
+        <SectionHeader title={t('settings.legal')} />
+
+        <SettingsRow
+          icon="📜"
+          title={t('settings.termsOfUse')}
+          onPress={() => WebBrowser.openBrowserAsync('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/')}
         />
 
         {/* Hesap */}

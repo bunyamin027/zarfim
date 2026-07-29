@@ -4,6 +4,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'expo-router';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -30,7 +31,8 @@ interface EnvelopeCardProps {
 
 export default function EnvelopeCard({ envelope }: EnvelopeCardProps) {
   const { t } = useTranslation();
-  const { name, icon, spent, color } = envelope;
+  const router = useRouter();
+  const { id, name, icon, spent, color } = envelope;
   const monthlyLimit = envelope.monthly_limit ?? envelope.monthlyLimit ?? 0;
   const progress = Math.min(spent / monthlyLimit, 1);
   const remaining = monthlyLimit - spent;
@@ -70,7 +72,7 @@ export default function EnvelopeCard({ envelope }: EnvelopeCardProps) {
     <Pressable
       onPressIn={() => (scale.value = withSpring(0.97))}
       onPressOut={() => (scale.value = withSpring(1))}
-      onPress={() => console.log('Go to detail', id)}
+      onPress={() => router.push(`/envelope/${id}`)}
     >
       <Animated.View style={[styles.container, animatedContainerStyle]}>
       <View style={styles.flapContainer}>
