@@ -10,7 +10,8 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.zarfim.app",
-      "usesAppleSignIn": true
+      "usesAppleSignIn": true,
+      "buildNumber": "4"
     },
     "android": {
       "adaptiveIcon": {
@@ -20,6 +21,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "package": "com.zarfim.app",
+      "versionCode": 4,
       "predictiveBackGestureEnabled": false
     },
     "web": {

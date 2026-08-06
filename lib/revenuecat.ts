@@ -21,8 +21,8 @@ try {
   Purchases = null;
 }
 
-const iosKey = process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY || '';
-const androidKey = process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_KEY || '';
+const iosKey = process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY || process.env.EXPO_PUBLIC_REVENUECAT_APPLE_KEY || '';
+const androidKey = process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_KEY || process.env.EXPO_PUBLIC_REVENUECAT_GOOGLE_KEY || '';
 
 export const isRevenueCatConfigured =
   !!Purchases && (!!iosKey || !!androidKey);

@@ -100,6 +100,42 @@ export default function SettingsScreen() {
     );
   };
 
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      t('auth.deleteAccount'),
+      t('auth.deleteAccountConfirm'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('auth.deleteAccountButton'),
+          style: 'destructive',
+          onPress: () => {
+            // Second confirmation
+            Alert.alert(
+              t('auth.deleteAccount'),
+              t('auth.deleteAccountFinalConfirm'),
+              [
+                { text: t('common.cancel'), style: 'cancel' },
+                {
+                  text: t('auth.deleteAccountButton'),
+                  style: 'destructive',
+                  onPress: async () => {
+                    try {
+                      await useAuthStore.getState().deleteAccount();
+                      Alert.alert(t('common.info'), t('auth.deleteAccountSuccess'));
+                    } catch {
+                      Alert.alert(t('common.error'), t('auth.deleteAccountError'));
+                    }
+                  },
+                },
+              ],
+            );
+          },
+        },
+      ],
+    );
+  };
+
   const handleLanguageChange = async (lang: SupportedLanguage) => {
     setShowLanguagePicker(false);
 
@@ -238,6 +274,13 @@ export default function SettingsScreen() {
 
         {/* Hesap */}
         <SectionHeader title={t('settings.account')} />
+
+        <SettingsRow
+          icon="🗑️"
+          title={t('settings.deleteAccount')}
+          onPress={handleDeleteAccount}
+          danger
+        />
 
         <SettingsRow
           icon="🚪"

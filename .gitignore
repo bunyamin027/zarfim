@@ -43,3 +43,8 @@ yarn-error.*
 
 # logs
 *.log
+
+# build & IDE
+build/
+.idea/
+

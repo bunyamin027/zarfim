@@ -31,6 +31,7 @@ interface AuthState {
   signInWithApple: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
+  deleteAccount: () => Promise<void>;
   clearError: () => void;
 }
 
@@ -302,6 +303,40 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
     } catch (error) {
       set({ isLoading: false, error: (error as AuthError).message });
+    }
+  },
+
+  deleteAccount: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      if (!isSupabaseConfigured) {
+        throw new Error('Supabase yapılandırılmamış');
+      }
+
+      // Call the server-side RPC function to delete user and all data
+      const { error: rpcError } = await supabase.rpc('delete_user');
+
+      if (rpcError) {
+        throw rpcError;
+      }
+
+      // Sign out locally after deletion
+      try {
+        await supabase.auth.signOut();
+      } catch {
+        // Ignore sign-out errors — user is already deleted server-side
+      }
+
+      set({
+        user: null,
+        session: null,
+        isAuthenticated: false,
+        isLoading: false,
+      });
+    } catch (error: any) {
+      const msg = error?.message || String(error);
+      set({ isLoading: false, error: msg });
+      throw error;
     }
   },
 

@@ -104,7 +104,13 @@
     "continueWithGoogle": "Google ile devam et",
     "signOut": "Çıkış Yap",
     "signOutConfirm": "Hesabınızdan çıkış yapmak istediğinize emin misiniz?",
-    "signOutButton": "Çıkış"
+    "signOutButton": "Çıkış",
+    "deleteAccount": "Hesabımı Sil",
+    "deleteAccountConfirm": "Hesabınızı silmek istediğinize emin misiniz? Bu işlem geri alınamaz ve tüm verileriniz (zarflar, harcamalar, abonelik bilgisi) kalıcı olarak silinecektir.",
+    "deleteAccountFinalConfirm": "Bu işlem geri alınamaz. Hesabınız ve tüm verileriniz kalıcı olarak silinecektir. Devam etmek istiyor musunuz?",
+    "deleteAccountButton": "Hesabı Kalıcı Olarak Sil",
+    "deleteAccountSuccess": "Hesabınız başarıyla silindi.",
+    "deleteAccountError": "Hesap silinirken bir hata oluştu. Lütfen tekrar deneyin."
   },
   "paywall": {
     "title": "Zarfım Premium",
@@ -156,6 +162,8 @@
     "notifications": "Bildirimler",
     "notificationsOn": "Açık",
     "account": "Hesap",
+    "deleteAccount": "Hesabımı Sil",
+    "deleteAccountWarning": "Tüm verileriniz kalıcı olarak silinecektir",
     "appVersion": "Zarfım v1.0.0",
     "appTagline": "Zarf usulü bütçe yönetimi",
     "free": "Ücretsiz",

@@ -104,7 +104,13 @@
     "continueWithGoogle": "المتابعة مع Google",
     "signOut": "تسجيل الخروج",
     "signOutConfirm": "هل أنت متأكد أنك تريد تسجيل الخروج من حسابك؟",
-    "signOutButton": "خروج"
+    "signOutButton": "خروج",
+    "deleteAccount": "حذف حسابي",
+    "deleteAccountConfirm": "هل أنت متأكد أنك تريد حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء وسيتم حذف جميع بياناتك (المظاريف، المصاريف، معلومات الاشتراك) نهائياً.",
+    "deleteAccountFinalConfirm": "لا يمكن التراجع عن هذا الإجراء. سيتم حذف حسابك وجميع بياناتك نهائياً. هل تريد المتابعة؟",
+    "deleteAccountButton": "حذف الحساب نهائياً",
+    "deleteAccountSuccess": "تم حذف حسابك بنجاح.",
+    "deleteAccountError": "حدث خطأ أثناء حذف الحساب. يرجى المحاولة مرة أخرى."
   },
   "paywall": {
     "title": "مظروفي بريميوم",
@@ -156,6 +162,8 @@
     "notifications": "الإشعارات",
     "notificationsOn": "مفعّلة",
     "account": "الحساب",
+    "deleteAccount": "حذف حسابي",
+    "deleteAccountWarning": "سيتم حذف جميع بياناتك نهائياً",
     "appVersion": "مظروفي v1.0.0",
     "appTagline": "إدارة الميزانية بطريقة المظاريف",
     "free": "مجاني",

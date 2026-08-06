@@ -29,6 +29,7 @@ interface SubscriptionState {
 
   // Actions
   checkSubscription: () => Promise<void>;
+  fetchOfferings: () => Promise<void>;
   purchase: (pkg: any) => Promise<boolean>;
   restore: () => Promise<boolean>;
   toggleSecretPremium: () => boolean;
@@ -86,6 +87,25 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
       set({
         isLoading: false,
         error: error.message || 'Abonelik kontrol edilemedi',
+      });
+    }
+  },
+
+  fetchOfferings: async () => {
+    if (!isRevenueCatConfigured) return;
+
+    set({ isLoading: true, error: null });
+    try {
+      const currentOffering = await getOfferings();
+      set({
+        currentOffering,
+        isLoading: false,
+        error: currentOffering ? null : 'Ürün bilgisi alınamadı. Lütfen tekrar deneyin.',
+      });
+    } catch (error: any) {
+      set({
+        isLoading: false,
+        error: error.message || 'Ürün bilgisi yüklenemedi',
       });
     }
   },

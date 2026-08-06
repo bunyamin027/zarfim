@@ -30,6 +30,8 @@ const FEATURE_KEYS = [
   { icon: '🎨', titleKey: 'paywall.features.themes', descKey: 'paywall.features.themesDesc' },
 ];
 
+const MAX_OFFERING_RETRIES = 3;
+
 export default function PaywallScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -42,14 +44,33 @@ export default function PaywallScreen() {
     purchase,
     restore,
     checkSubscription,
+    fetchOfferings,
     clearError,
   } = useSubscriptionStore();
 
   const [purchasing, setPurchasing] = useState(false);
+  const [offeringsRetryCount, setOfferingsRetryCount] = useState(0);
 
+  // Initial load: check subscription + fetch offerings
   useEffect(() => {
     checkSubscription();
   }, []);
+
+  // Auto-retry offerings if they fail on first load (up to MAX_OFFERING_RETRIES)
+  useEffect(() => {
+    if (
+      !isLoading &&
+      !currentOffering &&
+      isRevenueCatConfigured &&
+      offeringsRetryCount < MAX_OFFERING_RETRIES
+    ) {
+      const timer = setTimeout(() => {
+        setOfferingsRetryCount((c) => c + 1);
+        fetchOfferings();
+      }, 2000 * (offeringsRetryCount + 1)); // Progressive delay: 2s, 4s, 6s
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, currentOffering, offeringsRetryCount]);
 
   useEffect(() => {
     if (isPremium) {
@@ -63,6 +84,12 @@ export default function PaywallScreen() {
   const monthlyPackage = offering?.monthly || offering?.availablePackages?.[0];
   const priceString = monthlyPackage?.product?.priceString || getMockPriceString();
 
+  const handleRetryOfferings = () => {
+    setOfferingsRetryCount(0);
+    clearError();
+    fetchOfferings();
+  };
+
   const handlePurchase = async () => {
     if (!isRevenueCatConfigured) {
       Alert.alert(t('paywall.devMode'), t('paywall.devModeMsg'));
@@ -70,7 +97,8 @@ export default function PaywallScreen() {
     }
 
     if (!monthlyPackage) {
-      Alert.alert(t('common.error'), t('paywall.productError'));
+      // Instead of just showing an error, try to fetch offerings first
+      handleRetryOfferings();
       return;
     }
 
@@ -96,6 +124,9 @@ export default function PaywallScreen() {
       clearError();
     }
   };
+
+  // Determine if offerings failed to load
+  const offeringsFailed = isRevenueCatConfigured && !currentOffering && !isLoading;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -145,6 +176,15 @@ export default function PaywallScreen() {
         <View style={styles.ctaContainer}>
           {purchasing || isLoading ? (
             <ActivityIndicator size="large" color={Colors.gold} />
+          ) : offeringsFailed ? (
+            <View style={styles.retryContainer}>
+              <Text style={styles.retryText}>{t('paywall.productError')}</Text>
+              <PrimaryButton
+                title="↻ Tekrar Dene"
+                onPress={handleRetryOfferings}
+                style={styles.retryButton}
+              />
+            </View>
           ) : (
             <PrimaryButton
               title={t('paywall.upgrade')}
@@ -154,7 +194,7 @@ export default function PaywallScreen() {
             />
           )}
 
-          {error && (
+          {error && !offeringsFailed && (
             <Text style={styles.errorText}>{error}</Text>
           )}
 
@@ -292,6 +332,23 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.gold,
     width: '100%',
     shadowColor: Colors.gold,
+  },
+  retryContainer: {
+    alignItems: 'center',
+    width: '100%',
+    paddingVertical: Spacing.md,
+  },
+  retryText: {
+    fontFamily: Fonts.body,
+    fontSize: FontSizes.sm,
+    color: Colors.paperDark,
+    textAlign: 'center',
+    marginBottom: Spacing.md,
+  },
+  retryButton: {
+    backgroundColor: Colors.inkLight,
+    borderWidth: 1,
+    borderColor: Colors.gold,
   },
   errorText: {
     fontFamily: Fonts.body,
