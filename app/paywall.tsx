@@ -209,9 +209,18 @@ export default function PaywallScreen() {
           )}
         </View>
 
-        <Pressable onPress={() => WebBrowser.openBrowserAsync('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/')}>
+        <View style={styles.legalContainer}>
           <Text style={styles.legal}>{t('paywall.legal')}</Text>
-        </Pressable>
+          <View style={styles.legalLinks}>
+            <Pressable onPress={() => WebBrowser.openBrowserAsync('https://kahramanapp.com/privacy')}>
+              <Text style={styles.legalLink}>{t('settings.privacyPolicy')}</Text>
+            </Pressable>
+            <Text style={styles.legalSeparator}> • </Text>
+            <Pressable onPress={() => WebBrowser.openBrowserAsync('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/')}>
+              <Text style={styles.legalLink}>{t('settings.termsOfUse')}</Text>
+            </Pressable>
+          </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -380,12 +389,37 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 18,
   },
+  legalContainer: {
+    marginTop: Spacing.xl,
+    alignItems: 'center',
+    paddingHorizontal: Spacing.md,
+  },
   legal: {
     fontFamily: Fonts.body,
     fontSize: FontSizes.xs,
-    color: Colors.inkLight,
+    color: Colors.paperDark,
     textAlign: 'center',
     lineHeight: 16,
-    opacity: 0.6,
+    opacity: 0.5,
+    marginBottom: Spacing.sm,
+  },
+  legalLinks: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  legalLink: {
+    fontFamily: Fonts.bodyMedium,
+    fontSize: FontSizes.xs,
+    color: Colors.paperDark,
+    textDecorationLine: 'underline',
+    opacity: 0.8,
+  },
+  legalSeparator: {
+    fontFamily: Fonts.body,
+    fontSize: FontSizes.xs,
+    color: Colors.paperDark,
+    opacity: 0.5,
+    marginHorizontal: Spacing.xs,
   },
 });

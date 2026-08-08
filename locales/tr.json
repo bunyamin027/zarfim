@@ -130,7 +130,7 @@
     "goBack": "Zarflarıma Dön",
     "restoreSuccess": "✅ Geri Yüklendi",
     "restoreSuccessMsg": "Premium üyeliğiniz geri yüklendi!",
-    "legal": "Abonelik Apple ID / Google Play hesabınız üzerinden faturalandırılır. Mevcut dönem bitmeden en az 24 saat önce iptal edilmezse otomatik yenilenir. Gizlilik Politikası • Kullanım Şartları",
+    "legal": "Abonelik Apple ID / Google Play hesabınız üzerinden faturalandırılır. Mevcut dönem bitmeden en az 24 saat önce iptal edilmezse otomatik yenilenir.",
     "features": {
       "unlimitedEnvelopes": "Sınırsız Zarf",
       "unlimitedEnvelopesDesc": "3 zarf sınırı kalkar, istediğin kadar kategori",
@@ -175,6 +175,7 @@
     "restart": "Yeniden Başlat",
     "legal": "Yasal",
     "termsOfUse": "Kullanım Koşulları (EULA)",
+    "privacyPolicy": "Gizlilik Politikası",
     "support": "Destek & Geri Bildirim",
     "developer": "Geliştirici",
     "website": "Web Sitesi"

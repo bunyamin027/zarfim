@@ -271,6 +271,11 @@ export default function SettingsScreen() {
           title={t('settings.termsOfUse')}
           onPress={() => WebBrowser.openBrowserAsync('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/')}
         />
+        <SettingsRow
+          icon="🔒"
+          title={t('settings.privacyPolicy')}
+          onPress={() => WebBrowser.openBrowserAsync('https://kahramanapp.com/privacy')}
+        />
 
         {/* Hesap */}
         <SectionHeader title={t('settings.account')} />
