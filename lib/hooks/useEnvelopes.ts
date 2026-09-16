@@ -4,7 +4,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { useAuthStore } from '@/store/auth';
-import { useEnvelopesStore, LocalEnvelope } from '@/store/envelopes';
+import { useEnvelopesStore, LocalEnvelope, LocalIncome, LocalIncomeCategory } from '@/store/envelopes';
 
 export interface Envelope extends LocalEnvelope {
   spent: number;
@@ -14,6 +14,7 @@ export interface MonthlyStats {
   totalBudget: number;
   totalSpent: number;
   envelopeCount: number;
+  totalIncome: number; // same as totalBudget now, but good to have
 }
 
 function getMonthStart(): string {
@@ -108,19 +109,90 @@ export function useEnvelopes() {
   });
 }
 
+export function useIncomes() {
+  const storeIncomes = useEnvelopesStore((s) => s.incomes);
+
+  return useQuery<LocalIncome[]>({
+    queryKey: ['incomes', storeIncomes],
+    queryFn: async () => {
+      if (!isSupabaseConfigured) {
+        const monthStart = new Date(getMonthStart()).getTime();
+        const monthEnd = new Date(getMonthEnd()).getTime();
+        return storeIncomes
+          .filter((inc) => {
+            const txTime = new Date(inc.occurred_at).getTime();
+            return txTime >= monthStart && txTime <= monthEnd;
+          })
+          .sort((a, b) => new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime());
+      }
+
+      const monthStart = getMonthStart();
+      const monthEnd = getMonthEnd();
+
+      const { data, error } = await supabase
+        .from('incomes')
+        .select('*')
+        .gte('occurred_at', monthStart)
+        .lte('occurred_at', monthEnd)
+        .order('occurred_at', { ascending: false });
+
+      if (error || !data) {
+        return storeIncomes
+          .filter((inc) => {
+            const txTime = new Date(inc.occurred_at).getTime();
+            return txTime >= new Date(monthStart).getTime() && txTime <= new Date(monthEnd).getTime();
+          })
+          .sort((a, b) => new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime());
+      }
+      return data ?? [];
+    },
+    staleTime: 1000,
+  });
+}
+
+export function useIncomeCategories() {
+  const storeIncomeCategories = useEnvelopesStore((s) => s.incomeCategories);
+
+  return useQuery<LocalIncomeCategory[]>({
+    queryKey: ['incomeCategories', storeIncomeCategories],
+    queryFn: async () => {
+      if (!isSupabaseConfigured) {
+        return storeIncomeCategories;
+      }
+      const { data, error } = await supabase
+        .from('income_categories')
+        .select('*')
+        .order('sort_order', { ascending: true });
+
+      if (error || !data) {
+        return storeIncomeCategories;
+      }
+      return data ?? [];
+    },
+    staleTime: 1000,
+  });
+}
+
 export function useMonthlyStats() {
   const { data: envelopes } = useEnvelopes();
+  const { data: incomes } = useIncomes();
 
   const stats: MonthlyStats = {
     totalBudget: 0,
     totalSpent: 0,
     envelopeCount: 0,
+    totalIncome: 0,
   };
 
   if (envelopes) {
     stats.envelopeCount = envelopes.length;
     stats.totalBudget = envelopes.reduce((sum, e) => sum + Number(e.monthly_limit), 0);
     stats.totalSpent = envelopes.reduce((sum, e) => sum + Number(e.spent), 0);
+  }
+
+  if (incomes) {
+    const totalInc = incomes.reduce((sum, i) => sum + Number(i.amount), 0);
+    stats.totalIncome = totalInc;
   }
 
   return stats;

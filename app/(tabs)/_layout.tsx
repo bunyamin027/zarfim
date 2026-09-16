@@ -29,7 +29,7 @@ export default function TabLayout() {
         },
         tabBarLabelStyle: {
           fontFamily: 'Manrope_500Medium',
-          fontSize: 11,
+          fontSize: 10, // slightly smaller to fit 5 tabs
         },
         headerShown: false,
       }}
@@ -39,6 +39,20 @@ export default function TabLayout() {
         options={{
           title: t('tabs.home'),
           tabBarIcon: ({ color }) => <TabIcon emoji="📬" color={color as string} />,
+        }}
+      />
+      <Tabs.Screen
+        name="incomes"
+        options={{
+          title: t('tabs.incomes'),
+          tabBarIcon: ({ color }) => <TabIcon emoji="💵" color={color as string} />,
+        }}
+      />
+      <Tabs.Screen
+        name="expenses"
+        options={{
+          title: t('tabs.expenses'),
+          tabBarIcon: ({ color }) => <TabIcon emoji="💸" color={color as string} />,
         }}
       />
       <Tabs.Screen

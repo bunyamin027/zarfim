@@ -1,6 +1,5 @@
 /**
- * Add Expense Modal — Zarfım
- * Harcama ekleme modal ekranı.
+ * Add Income Modal — Zarfım
  */
 import React, { useState } from 'react';
 import {
@@ -15,27 +14,23 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Colors, Fonts, FontSizes, Spacing, BorderRadius } from '@/lib/theme';
 import PrimaryButton from '@/components/PrimaryButton';
 import { useEnvelopesStore } from '@/store/envelopes';
-import { useEnvelopes, useMonthlyStats } from '@/lib/hooks/useEnvelopes';
+import { useIncomeCategories } from '@/lib/hooks/useEnvelopes';
 import { queryClient } from '@/lib/queryClient';
-import { formatCurrency, getCurrencySymbol } from '@/lib/formatCurrency';
+import { getCurrencySymbol } from '@/lib/formatCurrency';
 
-export default function AddExpenseModal() {
+export default function AddIncomeModal() {
   const { t } = useTranslation();
   const router = useRouter();
-  const params = useLocalSearchParams<{ envelopeId?: string }>();
 
-  const { data: envelopes } = useEnvelopes();
-  const stats = useMonthlyStats();
-  const addTransaction = useEnvelopesStore((s) => s.addTransaction);
+  const { data: categories } = useIncomeCategories();
+  const addIncome = useEnvelopesStore((s) => s.addIncome);
 
-  const [selectedId, setSelectedId] = useState<string>(
-    params.envelopeId || envelopes?.[0]?.id || ''
-  );
+  const [selectedId, setSelectedId] = useState<string>('');
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,36 +38,21 @@ export default function AddExpenseModal() {
   const handleSubmit = async () => {
     const numericAmount = parseFloat(amount.replace(',', '.'));
 
-    if (!selectedId || isNaN(numericAmount) || numericAmount <= 0) {
-      Alert.alert(t('common.error'), t('addExpenseModal.fillAll'));
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      Alert.alert(t('common.error'), t('addIncomeModal.fillAll'));
       return;
-    }
-
-    const projectedSpent = stats.totalSpent + numericAmount;
-
-    // Check 100% Limit against totalIncome
-    if (stats.totalIncome > 0 && projectedSpent > stats.totalIncome) {
-      Alert.alert(t('common.error'), t('addExpenseModal.limitExceeded'));
-      return;
-    }
-
-    // Check 80% Warning against totalIncome
-    if (stats.totalIncome > 0 && projectedSpent >= stats.totalIncome * 0.8 && stats.totalSpent < stats.totalIncome * 0.8) {
-      // Alert once when passing the 80% threshold
-      Alert.alert(t('common.info', 'Bilgi'), t('addExpenseModal.eightyPercentWarning'));
     }
 
     try {
       setIsSubmitting(true);
-      await addTransaction({
-        envelope_id: selectedId,
+      await addIncome({
+        category_id: selectedId || null,
         amount: numericAmount,
         note: note.trim() || null,
         occurred_at: new Date().toISOString(),
       });
 
-      await queryClient.invalidateQueries({ queryKey: ['envelopes'] });
-      await queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      await queryClient.invalidateQueries({ queryKey: ['incomes'] });
 
       router.back();
     } catch (e) {
@@ -93,32 +73,32 @@ export default function AddExpenseModal() {
           <Pressable onPress={() => router.back()} style={styles.closeButton}>
             <Text style={styles.closeText}>✕</Text>
           </Pressable>
-          <Text style={styles.title}>{t('addExpenseModal.title')}</Text>
+          <Text style={styles.title}>{t('addIncomeModal.title')}</Text>
           <View style={{ width: 40 }} />
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-          {/* Zarf Seçici */}
-          <Text style={styles.label}>{t('addExpenseModal.selectEnvelope')}</Text>
+          {/* Kategori Seçici */}
+          <Text style={styles.label}>{t('addIncomeModal.selectCategory')}</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.chipsContainer}
           >
-            {(envelopes || []).map((env) => {
-              const isSelected = env.id === selectedId;
+            {(categories || []).map((cat) => {
+              const isSelected = cat.id === selectedId;
               return (
                 <Pressable
-                  key={env.id}
-                  onPress={() => setSelectedId(env.id)}
+                  key={cat.id}
+                  onPress={() => setSelectedId(isSelected ? '' : cat.id)}
                   style={[
                     styles.chip,
-                    isSelected && { backgroundColor: env.color || Colors.stamp, borderColor: Colors.paper },
+                    isSelected && { backgroundColor: cat.color || Colors.sage, borderColor: Colors.paper },
                   ]}
                 >
-                  <Text style={styles.chipIcon}>{env.icon}</Text>
+                  <Text style={styles.chipIcon}>{cat.icon}</Text>
                   <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
-                    {env.name}
+                    {cat.name}
                   </Text>
                 </Pressable>
               );
@@ -126,7 +106,7 @@ export default function AddExpenseModal() {
           </ScrollView>
 
           {/* Tutar Girişi */}
-          <Text style={styles.label}>{t('addExpenseModal.amount')}</Text>
+          <Text style={styles.label}>{t('addIncomeModal.amount')}</Text>
           <View style={styles.amountInputContainer}>
             <Text style={styles.currencySymbol}>{getCurrencySymbol()}</Text>
             <TextInput
@@ -141,10 +121,10 @@ export default function AddExpenseModal() {
           </View>
 
           {/* Not / Açıklama */}
-          <Text style={styles.label}>{t('addExpenseModal.note')}</Text>
+          <Text style={styles.label}>{t('addIncomeModal.note')}</Text>
           <TextInput
             style={styles.noteInput}
-            placeholder={t('addExpenseModal.notePlaceholder')}
+            placeholder={t('addIncomeModal.notePlaceholder') || 'Açıklama'}
             placeholderTextColor={Colors.paperDark}
             value={note}
             onChangeText={setNote}
@@ -152,10 +132,10 @@ export default function AddExpenseModal() {
 
           <View style={styles.submitContainer}>
             <PrimaryButton
-              title={t('addExpenseModal.submit')}
-              icon="💸"
+              title={t('addIncomeModal.submit')}
+              icon="💵"
               onPress={handleSubmit}
-              disabled={isSubmitting || !selectedId || !amount}
+              disabled={isSubmitting || !amount}
             />
           </View>
         </ScrollView>
@@ -234,12 +214,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderWidth: 1.5,
-    borderColor: Colors.gold,
+    borderColor: Colors.sage,
   },
   currencySymbol: {
     fontFamily: Fonts.display,
     fontSize: 36,
-    color: Colors.gold,
+    color: Colors.sage,
     marginEnd: Spacing.md,
   },
   amountInput: {

@@ -9,6 +9,24 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 
+export interface LocalIncomeCategory {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+  sort_order: number;
+  created_at: string;
+}
+
+export interface LocalIncome {
+  id: string;
+  category_id?: string | null;
+  amount: number;
+  occurred_at: string;
+  note: string | null;
+  created_at: string;
+}
+
 export interface LocalEnvelope {
   id: string;
   name: string;
@@ -34,6 +52,8 @@ export interface LocalTransaction {
 interface EnvelopesState {
   envelopes: LocalEnvelope[];
   transactions: LocalTransaction[];
+  incomes: LocalIncome[];
+  incomeCategories: LocalIncomeCategory[];
   
   // Actions
   setEnvelopes: (envelopes: LocalEnvelope[]) => void;
@@ -43,6 +63,15 @@ interface EnvelopesState {
   deleteEnvelope: (id: string) => Promise<void>;
   addTransaction: (transaction: Omit<LocalTransaction, 'id' | 'created_at'>) => Promise<LocalTransaction>;
   deleteTransaction: (id: string) => Promise<void>;
+  
+  // Income Actions
+  setIncomes: (incomes: LocalIncome[]) => void;
+  setIncomeCategories: (categories: LocalIncomeCategory[]) => void;
+  addIncome: (income: Omit<LocalIncome, 'id' | 'created_at'>) => Promise<LocalIncome>;
+  deleteIncome: (id: string) => Promise<void>;
+  addIncomeCategory: (category: Omit<LocalIncomeCategory, 'id' | 'created_at' | 'sort_order'>) => Promise<LocalIncomeCategory>;
+  deleteIncomeCategory: (id: string) => Promise<void>;
+
   resetToDefaults: () => void;
 }
 
@@ -117,14 +146,40 @@ const DEFAULT_TRANSACTIONS: LocalTransaction[] = [
   },
 ];
 
+const DEFAULT_INCOME_CATEGORIES: LocalIncomeCategory[] = [
+  {
+    id: 'inc-cat-1',
+    name: 'Maaş',
+    icon: '💰',
+    color: '#6F8F6A',
+    sort_order: 1,
+    created_at: new Date().toISOString(),
+  }
+];
+
+const DEFAULT_INCOMES: LocalIncome[] = [
+  {
+    id: 'inc-1',
+    category_id: 'inc-cat-1',
+    amount: 15000,
+    occurred_at: new Date().toISOString(),
+    note: 'Aylık Maaş',
+    created_at: new Date().toISOString(),
+  }
+];
+
 export const useEnvelopesStore = create<EnvelopesState>()(
   persist(
     (set, get) => ({
       envelopes: DEFAULT_ENVELOPES,
       transactions: DEFAULT_TRANSACTIONS,
+      incomes: DEFAULT_INCOMES,
+      incomeCategories: DEFAULT_INCOME_CATEGORIES,
 
       setEnvelopes: (envelopes) => set({ envelopes }),
       setTransactions: (transactions) => set({ transactions }),
+      setIncomes: (incomes) => set({ incomes }),
+      setIncomeCategories: (incomeCategories) => set({ incomeCategories }),
 
       addEnvelope: async (data) => {
         const newEnv: LocalEnvelope = {
@@ -238,7 +293,102 @@ export const useEnvelopesStore = create<EnvelopesState>()(
       },
 
       resetToDefaults: () => {
-        set({ envelopes: DEFAULT_ENVELOPES, transactions: DEFAULT_TRANSACTIONS });
+        set({
+          envelopes: DEFAULT_ENVELOPES,
+          transactions: DEFAULT_TRANSACTIONS,
+          incomes: DEFAULT_INCOMES,
+          incomeCategories: DEFAULT_INCOME_CATEGORIES,
+        });
+      },
+
+      addIncome: async (data) => {
+        const newIncome: LocalIncome = {
+          ...data,
+          id: `inc-${Date.now()}`,
+          created_at: new Date().toISOString(),
+        };
+
+        if (isSupabaseConfigured) {
+          try {
+            const { data: inserted, error } = await supabase
+              .from('incomes')
+              .insert({
+                category_id: newIncome.category_id,
+                amount: newIncome.amount,
+                occurred_at: newIncome.occurred_at,
+                note: newIncome.note,
+              })
+              .select()
+              .single();
+            if (!error && inserted) {
+              newIncome.id = inserted.id;
+            }
+          } catch (e) {
+            console.error('Supabase income insert error:', e);
+          }
+        }
+
+        set({ incomes: [newIncome, ...get().incomes] });
+        return newIncome;
+      },
+
+      deleteIncome: async (id) => {
+        if (isSupabaseConfigured) {
+          try {
+            await supabase.from('incomes').delete().eq('id', id);
+          } catch (e) {
+            console.error('Supabase income delete error:', e);
+          }
+        }
+
+        set({ incomes: get().incomes.filter((inc) => inc.id !== id) });
+      },
+
+      addIncomeCategory: async (data) => {
+        const newCat: LocalIncomeCategory = {
+          ...data,
+          id: `inc-cat-${Date.now()}`,
+          sort_order: get().incomeCategories.length + 1,
+          created_at: new Date().toISOString(),
+        };
+
+        if (isSupabaseConfigured) {
+          try {
+            const { data: inserted, error } = await supabase
+              .from('income_categories')
+              .insert({
+                name: newCat.name,
+                icon: newCat.icon,
+                color: newCat.color,
+                sort_order: newCat.sort_order,
+              })
+              .select()
+              .single();
+            if (!error && inserted) {
+              newCat.id = inserted.id;
+            }
+          } catch (e) {
+            console.error('Supabase income_category insert error:', e);
+          }
+        }
+
+        set({ incomeCategories: [...get().incomeCategories, newCat] });
+        return newCat;
+      },
+
+      deleteIncomeCategory: async (id) => {
+        if (isSupabaseConfigured) {
+          try {
+            await supabase.from('income_categories').delete().eq('id', id);
+          } catch (e) {
+            console.error('Supabase income_category delete error:', e);
+          }
+        }
+
+        set({
+          incomeCategories: get().incomeCategories.filter((c) => c.id !== id),
+          incomes: get().incomes.filter((inc) => inc.category_id !== id),
+        });
       },
     }),
     {

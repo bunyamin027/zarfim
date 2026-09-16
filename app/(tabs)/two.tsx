@@ -23,6 +23,7 @@ import { Colors, Fonts, FontSizes, Spacing, BorderRadius, Shadows } from '@/lib/
 import { useAuthStore } from '@/store/auth';
 import { useSubscriptionStore } from '@/store/subscription';
 import { useTransactions } from '@/lib/hooks/useTransactions';
+import { useIncomes } from '@/lib/hooks/useEnvelopes';
 import { formatCurrency } from '@/lib/formatCurrency';
 import PrimaryButton from '@/components/PrimaryButton';
 import { isRTL } from '@/lib/i18n';
@@ -34,6 +35,7 @@ export default function ReportsScreen() {
   const isPremium = useSubscriptionStore((s) => s.isPremium);
 
   const { data: transactions, isLoading } = useTransactions(isPremium);
+  const { data: incomes } = useIncomes();
   const [isExportingPdf, setIsExportingPdf] = useState(false);
   const [isExportingCsv, setIsExportingCsv] = useState(false);
 
@@ -75,6 +77,24 @@ export default function ReportsScreen() {
       total: dailyTotals[day],
     }));
   }, [transactions]);
+
+  // AI Insights Data
+  const aiInsights = useMemo(() => {
+    const totalSpent = transactions?.reduce((sum, tx) => sum + tx.amount, 0) || 0;
+    const totalIncome = incomes?.reduce((sum, inc) => sum + inc.amount, 0) || 0;
+    const savings = totalIncome - totalSpent;
+    const spendRatio = totalIncome > 0 ? (totalSpent / totalIncome) * 100 : 0;
+
+    let highestCat = '';
+    let highestAmount = 0;
+    if (pieData.length > 0) {
+      const sorted = [...pieData].sort((a, b) => b.value - a.value);
+      highestCat = sorted[0].label;
+      highestAmount = sorted[0].value;
+    }
+
+    return { totalSpent, totalIncome, savings, spendRatio, highestCat, highestAmount };
+  }, [transactions, incomes, pieData]);
 
   // 📄 PDF Dışa Aktarma
   const handleExportPDF = async () => {
@@ -273,6 +293,49 @@ export default function ReportsScreen() {
             </View>
           </View>
         )}
+
+        {/* AI Insights Card */}
+        <View style={styles.aiCard}>
+          <View style={styles.aiHeader}>
+            <Text style={styles.aiIcon}>🤖</Text>
+            <Text style={styles.aiTitle}>Akıllı Analiz</Text>
+          </View>
+          <Text style={styles.aiText}>
+            Bu ay toplam <Text style={styles.aiHighlight}>{formatCurrency(aiInsights.totalIncome)}</Text> geliriniz var.
+            Bunun <Text style={styles.aiHighlight}>%{aiInsights.spendRatio.toFixed(0)}</Text> kadarını harcadınız.
+          </Text>
+          {aiInsights.highestCat ? (
+            <Text style={styles.aiText}>
+              En yüksek harcamanız <Text style={styles.aiHighlight}>{aiInsights.highestCat}</Text> kategorisinde ({formatCurrency(aiInsights.highestAmount)}).
+            </Text>
+          ) : null}
+          <Text style={[styles.aiText, { marginTop: Spacing.md }]}>
+            Gidişat böyle devam ederse ay sonu tahmini tasarrufunuz:{'\n'}
+            <Text style={styles.aiSavings}>{formatCurrency(aiInsights.savings)}</Text>
+          </Text>
+        </View>
+
+        {/* Özeti Tablosu */}
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Aylık Özet Tablosu</Text>
+          <View style={styles.tableRow}>
+            <Text style={styles.tableLabel}>Toplam Gelir:</Text>
+            <Text style={styles.tableValuePositive}>{formatCurrency(aiInsights.totalIncome)}</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={styles.tableLabel}>Toplam Gider:</Text>
+            <Text style={styles.tableValueNegative}>{formatCurrency(aiInsights.totalSpent)}</Text>
+          </View>
+          <View style={[styles.tableRow, styles.tableTotalRow]}>
+            <Text style={styles.tableTotalLabel}>Net Durum:</Text>
+            <Text style={[
+              styles.tableTotalValue,
+              aiInsights.savings >= 0 ? styles.tableValuePositive : styles.tableValueNegative
+            ]}>
+              {formatCurrency(aiInsights.savings)}
+            </Text>
+          </View>
+        </View>
 
         {/* Kategori Dağılımı Grafiği */}
         <View style={styles.card}>
@@ -525,4 +588,82 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.gold,
   },
+  aiCard: {
+    backgroundColor: Colors.inkLight,
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
+    padding: Spacing.xl,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    borderColor: Colors.gold + '40',
+  },
+  aiHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
+  aiIcon: {
+    fontSize: 24,
+    marginEnd: Spacing.sm,
+  },
+  aiTitle: {
+    fontFamily: Fonts.displayMedium,
+    fontSize: FontSizes.lg,
+    color: Colors.gold,
+  },
+  aiText: {
+    fontFamily: Fonts.body,
+    fontSize: FontSizes.md,
+    color: Colors.paper,
+    lineHeight: 24,
+    marginBottom: Spacing.xs,
+  },
+  aiHighlight: {
+    fontFamily: Fonts.bodyBold,
+    color: Colors.paper,
+  },
+  aiSavings: {
+    fontFamily: Fonts.displayMedium,
+    fontSize: FontSizes.xl,
+    color: Colors.sage,
+    marginTop: Spacing.sm,
+  },
+  tableRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.inkLight,
+  },
+  tableTotalRow: {
+    borderBottomWidth: 0,
+    marginTop: Spacing.sm,
+    paddingTop: Spacing.md,
+    borderTopWidth: 2,
+    borderTopColor: Colors.ink,
+  },
+  tableLabel: {
+    fontFamily: Fonts.body,
+    fontSize: FontSizes.md,
+    color: Colors.ink,
+  },
+  tableTotalLabel: {
+    fontFamily: Fonts.bodyBold,
+    fontSize: FontSizes.md,
+    color: Colors.ink,
+  },
+  tableValuePositive: {
+    fontFamily: Fonts.bodyBold,
+    fontSize: FontSizes.md,
+    color: Colors.sage,
+  },
+  tableValueNegative: {
+    fontFamily: Fonts.bodyBold,
+    fontSize: FontSizes.md,
+    color: Colors.stamp,
+  },
+  tableTotalValue: {
+    fontFamily: Fonts.displayMedium,
+    fontSize: FontSizes.lg,
+  }
 });

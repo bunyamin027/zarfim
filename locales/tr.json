@@ -21,7 +21,9 @@
   "tabs": {
     "home": "Ana Sayfa",
     "reports": "Raporlar",
-    "settings": "Ayarlar"
+    "settings": "Ayarlar",
+    "incomes": "Gelirler",
+    "expenses": "Giderler"
   },
   "dashboard": {
     "title": "📬 Zarfım",
@@ -55,7 +57,36 @@
     "notePlaceholder": "Örn: Market alışverişi",
     "submit": "Harcamayı Kaydet",
     "fillAll": "Lütfen bir zarf seçin ve geçerli bir tutar girin.",
-    "success": "Harcama başarıyla eklendi!"
+    "success": "Harcama başarıyla eklendi!",
+    "limitExceeded": "Bu harcama toplam geliri (bütçeyi) aşıyor! İşlem engellendi.",
+    "eightyPercentWarning": "Uyarı: Toplam harcamanız bütçenizin %80'ine ulaştı!"
+  },
+  "incomes": {
+    "title": "Gelirlerim",
+    "addIncome": "Gelir Ekle",
+    "addCategory": "+ Kategori Ekle",
+    "noIncomes": "Henüz gelir eklenmedi."
+  },
+  "addIncomeModal": {
+    "title": "💵 Gelir Ekle",
+    "selectCategory": "Kategori Seçin (Opsiyonel)",
+    "amount": "Tutar",
+    "amountPlaceholder": "0.00",
+    "note": "Not (İsteğe bağlı)",
+    "notePlaceholder": "Örn: Maaş, Kira Geliri vs.",
+    "submit": "Geliri Kaydet",
+    "fillAll": "Lütfen geçerli bir tutar girin.",
+    "success": "Gelir başarıyla eklendi!"
+  },
+  "addIncomeCategoryModal": {
+    "title": "Gelir Kategorisi Oluştur",
+    "name": "Kategori Adı",
+    "namePlaceholder": "Örn: Maaş, Kira Geliri",
+    "submit": "Kategoriyi Oluştur"
+  },
+  "expenses": {
+    "title": "Giderlerim",
+    "noExpenses": "Henüz gider eklenmedi."
   },
   "addEnvelopeModal": {
     "title": "✉️ Yeni Zarf Oluştur",

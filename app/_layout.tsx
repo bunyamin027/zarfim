@@ -145,6 +145,22 @@ function RootLayoutNav() {
         }}
       />
       <Stack.Screen
+        name="add-income"
+        options={{
+          presentation: 'modal',
+          headerShown: false,
+          gestureEnabled: true,
+        }}
+      />
+      <Stack.Screen
+        name="add-income-category"
+        options={{
+          presentation: 'modal',
+          headerShown: false,
+          gestureEnabled: true,
+        }}
+      />
+      <Stack.Screen
         name="envelope/[id]"
         options={{
           headerShown: false,

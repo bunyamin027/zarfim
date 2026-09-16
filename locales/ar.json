@@ -21,7 +21,9 @@
   "tabs": {
     "home": "الرئيسية",
     "reports": "التقارير",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "incomes": "المداخيل",
+    "expenses": "النفقات"
   },
   "dashboard": {
     "title": "📬 مظروفي",
@@ -47,15 +49,44 @@
     "bills": "الفواتير"
   },
   "addExpenseModal": {
-    "title": "💸 إضافة مصروف",
-    "selectEnvelope": "اختر المظروف",
+    "title": "💸 إضافة نفقة",
+    "selectEnvelope": "اختر ظرفًا",
     "amount": "المبلغ",
     "amountPlaceholder": "0.00",
-    "note": "ملاحظة / المتجر (اختياري)",
-    "notePlaceholder": "مثال: تسوق المخبز",
-    "submit": "حفظ المصروف",
-    "fillAll": "يرجى اختيار مظروف وإدخال مبلغ صحيح.",
-    "success": "تمت إضافة المصروف بنجاح!"
+    "note": "ملاحظة / متجر (اختياري)",
+    "notePlaceholder": "مثال: بقالة",
+    "submit": "حفظ النفقة",
+    "fillAll": "يرجى اختيار ظرف وإدخال مبلغ صحيح.",
+    "success": "تمت إضافة النفقة بنجاح!",
+    "limitExceeded": "هذه النفقة تتجاوز إجمالي الدخل (الميزانية)! تم الحظر.",
+    "eightyPercentWarning": "تحذير: لقد وصلت نفقاتك إلى 80٪ من الميزانية!"
+  },
+  "incomes": {
+    "title": "المداخيل",
+    "addIncome": "إضافة دخل",
+    "addCategory": "+ إضافة فئة",
+    "noIncomes": "لم تتم إضافة أي دخل بعد."
+  },
+  "addIncomeModal": {
+    "title": "💵 إضافة دخل",
+    "selectCategory": "اختر فئة (اختياري)",
+    "amount": "المبلغ",
+    "amountPlaceholder": "0.00",
+    "note": "ملاحظة (اختياري)",
+    "notePlaceholder": "مثال: الراتب، الإيجار الخ.",
+    "submit": "حفظ الدخل",
+    "fillAll": "يرجى إدخال مبلغ صحيح.",
+    "success": "تمت إضافة الدخل بنجاح!"
+  },
+  "addIncomeCategoryModal": {
+    "title": "إنشاء فئة دخل",
+    "name": "اسم الفئة",
+    "namePlaceholder": "مثال: الراتب",
+    "submit": "إنشاء الفئة"
+  },
+  "expenses": {
+    "title": "نفقاتي",
+    "noExpenses": "لم تتم إضافة أي نفقات بعد."
   },
   "addEnvelopeModal": {
     "title": "✉️ إنشاء مظروف جديد",
