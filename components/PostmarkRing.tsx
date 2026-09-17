@@ -22,7 +22,7 @@ export default function PostmarkRing({
   strokeWidth = 12,
 }: PostmarkRingProps) {
   const { t } = useTranslation();
-  const progress = Math.min(totalSpent / totalBudget, 1);
+  const progress = totalBudget > 0 ? Math.min(totalSpent / totalBudget, 1) : 0;
   const percentage = Math.round(progress * 100);
   const isOver = totalSpent > totalBudget;
 

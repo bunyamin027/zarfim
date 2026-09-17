@@ -226,6 +226,25 @@
     "freeLimitWarning": "يتم عرض بيانات آخر شهر فقط.",
     "upgradeForMore": "قم بالترقية إلى بريميوم لرؤية السجل كاملاً.",
     "noDataTitle": "أنت تبلي بلاءً حسناً!",
-    "noDataDesc": "لا توجد مصاريف لتحليلها بعد. ستظهر الرسوم البيانية هنا بمجرد إضافة أول مصروف لك."
+    "noDataDesc": "لا توجد مصاريف لتحليلها بعد. ستظهر الرسوم البيانية هنا بمجرد إضافة أول مصروف لك.",
+    "aiInsightsTitle": "تحليل ذكي",
+    "aiInsightsSummaryPart1": "لديك إجمالي دخل ",
+    "aiInsightsSummaryPart2": " هذا الشهر. لقد أنفقت ",
+    "aiInsightsSummaryPart3": "% منه.",
+    "aiInsightsHighestPart1": "أعلى نفقاتك كانت في فئة ",
+    "aiInsightsHighestPart2": " (",
+    "aiInsightsHighestPart3": ").",
+    "aiInsightsSavings": "إذا استمر الوضع على هذا النحو، فإن مدخراتك المتوقعة في نهاية الشهر:",
+    "monthlySummaryTitle": "جدول الملخص الشهري",
+    "totalIncome": "إجمالي الدخل:",
+    "totalExpense": "إجمالي النفقات:",
+    "netStatus": "الحالة الصافية:",
+    "notEnoughDataForTrend": "هناك حاجة إلى مزيد من البيانات للاتجاه.",
+    "exportPdfHeaderTitle": "📬 مظروفي — تقرير النفقات",
+    "exportTableDate": "التاريخ",
+    "exportTableEnvelope": "المظروف",
+    "exportTableNote": "ملاحظة / المتجر",
+    "exportTableAmount": "المبلغ",
+    "exportPdfFooter": "تم الإنشاء بواسطة تطبيق مظروفي للميزانية • kahramanapp.com"
   }
 }

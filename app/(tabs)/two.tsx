@@ -150,7 +150,7 @@ export default function ReportsScreen() {
         </head>
         <body>
           <div class="header">
-            <h1 class="title">📬 Zarfım — Harcama Raporu</h1>
+            <h1 class="title">${t('reports.exportPdfHeaderTitle')}</h1>
             <div class="subtitle">${new Date().toLocaleDateString(isArabic ? 'ar-SA' : 'tr-TR', { month: 'long', year: 'numeric' })}</div>
           </div>
           <div class="summary-box">
@@ -160,10 +160,10 @@ export default function ReportsScreen() {
           <table>
             <thead>
               <tr>
-                <th>Tarih</th>
-                <th>Zarf</th>
-                <th>Not / İşyeri</th>
-                <th>Tutar</th>
+                <th>${t('reports.exportTableDate')}</th>
+                <th>${t('reports.exportTableEnvelope')}</th>
+                <th>${t('reports.exportTableNote')}</th>
+                <th>${t('reports.exportTableAmount')}</th>
               </tr>
             </thead>
             <tbody>
@@ -171,7 +171,7 @@ export default function ReportsScreen() {
             </tbody>
           </table>
           <div class="footer">
-            Zarfım Bütçe Uygulaması ile oluşturuldu • kahramanapp.com
+            ${t('reports.exportPdfFooter')}
           </div>
         </body>
         </html>
@@ -207,7 +207,7 @@ export default function ReportsScreen() {
     try {
       setIsExportingCsv(true);
 
-      const header = 'Tarih,Zarf,Tutar,Not\n';
+      const header = `${t('reports.exportTableDate')},${t('reports.exportTableEnvelope')},${t('reports.exportTableAmount')},${t('reports.exportTableNote')}\n`;
       const rows = transactions
         .map((tx) => {
           const dateStr = new Date(tx.date).toLocaleDateString();
@@ -298,36 +298,35 @@ export default function ReportsScreen() {
         <View style={styles.aiCard}>
           <View style={styles.aiHeader}>
             <Text style={styles.aiIcon}>🤖</Text>
-            <Text style={styles.aiTitle}>Akıllı Analiz</Text>
+            <Text style={styles.aiTitle}>{t('reports.aiInsightsTitle')}</Text>
           </View>
           <Text style={styles.aiText}>
-            Bu ay toplam <Text style={styles.aiHighlight}>{formatCurrency(aiInsights.totalIncome)}</Text> geliriniz var.
-            Bunun <Text style={styles.aiHighlight}>%{aiInsights.spendRatio.toFixed(0)}</Text> kadarını harcadınız.
+            {t('reports.aiInsightsSummaryPart1')}<Text style={styles.aiHighlight}>{formatCurrency(aiInsights.totalIncome)}</Text>{t('reports.aiInsightsSummaryPart2')}<Text style={styles.aiHighlight}>{aiInsights.spendRatio.toFixed(0)}</Text>{t('reports.aiInsightsSummaryPart3')}
           </Text>
           {aiInsights.highestCat ? (
             <Text style={styles.aiText}>
-              En yüksek harcamanız <Text style={styles.aiHighlight}>{aiInsights.highestCat}</Text> kategorisinde ({formatCurrency(aiInsights.highestAmount)}).
+              {t('reports.aiInsightsHighestPart1')}<Text style={styles.aiHighlight}>{aiInsights.highestCat}</Text>{t('reports.aiInsightsHighestPart2')}{formatCurrency(aiInsights.highestAmount)}{t('reports.aiInsightsHighestPart3')}
             </Text>
           ) : null}
           <Text style={[styles.aiText, { marginTop: Spacing.md }]}>
-            Gidişat böyle devam ederse ay sonu tahmini tasarrufunuz:{'\n'}
+            {t('reports.aiInsightsSavings')}{'\n'}
             <Text style={styles.aiSavings}>{formatCurrency(aiInsights.savings)}</Text>
           </Text>
         </View>
 
         {/* Özeti Tablosu */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Aylık Özet Tablosu</Text>
+          <Text style={styles.cardTitle}>{t('reports.monthlySummaryTitle')}</Text>
           <View style={styles.tableRow}>
-            <Text style={styles.tableLabel}>Toplam Gelir:</Text>
+            <Text style={styles.tableLabel}>{t('reports.totalIncome')}</Text>
             <Text style={styles.tableValuePositive}>{formatCurrency(aiInsights.totalIncome)}</Text>
           </View>
           <View style={styles.tableRow}>
-            <Text style={styles.tableLabel}>Toplam Gider:</Text>
+            <Text style={styles.tableLabel}>{t('reports.totalExpense')}</Text>
             <Text style={styles.tableValueNegative}>{formatCurrency(aiInsights.totalSpent)}</Text>
           </View>
           <View style={[styles.tableRow, styles.tableTotalRow]}>
-            <Text style={styles.tableTotalLabel}>Net Durum:</Text>
+            <Text style={styles.tableTotalLabel}>{t('reports.netStatus')}</Text>
             <Text style={[
               styles.tableTotalValue,
               aiInsights.savings >= 0 ? styles.tableValuePositive : styles.tableValueNegative
@@ -396,7 +395,7 @@ export default function ReportsScreen() {
               </CartesianChart>
             ) : (
               <View style={styles.notEnoughData}>
-                <Text style={styles.subtitle}>Trend için daha fazla veriye ihtiyaç var.</Text>
+                <Text style={styles.subtitle}>{t('reports.notEnoughDataForTrend')}</Text>
               </View>
             )}
           </View>

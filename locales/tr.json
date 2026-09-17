@@ -226,6 +226,25 @@
     "freeLimitWarning": "Sadece son 1 ayın verisi gösteriliyor.",
     "upgradeForMore": "Tüm geçmişi görmek için Premium'a yükseltin.",
     "noDataTitle": "Harika Gidiyorsun!",
-    "noDataDesc": "Henüz analiz edilecek harcama yok. İlk harcamanı eklediğinde grafikler burada belirecek."
+    "noDataDesc": "Henüz analiz edilecek harcama yok. İlk harcamanı eklediğinde grafikler burada belirecek.",
+    "aiInsightsTitle": "Akıllı Analiz",
+    "aiInsightsSummaryPart1": "Bu ay toplam ",
+    "aiInsightsSummaryPart2": " geliriniz var. Bunun ",
+    "aiInsightsSummaryPart3": " kadarını harcadınız.",
+    "aiInsightsHighestPart1": "En yüksek harcamanız ",
+    "aiInsightsHighestPart2": " kategorisinde (",
+    "aiInsightsHighestPart3": ").",
+    "aiInsightsSavings": "Gidişat böyle devam ederse ay sonu tahmini tasarrufunuz:",
+    "monthlySummaryTitle": "Aylık Özet Tablosu",
+    "totalIncome": "Toplam Gelir:",
+    "totalExpense": "Toplam Gider:",
+    "netStatus": "Net Durum:",
+    "notEnoughDataForTrend": "Trend için daha fazla veriye ihtiyaç var.",
+    "exportPdfHeaderTitle": "📬 Zarfım — Harcama Raporu",
+    "exportTableDate": "Tarih",
+    "exportTableEnvelope": "Zarf",
+    "exportTableNote": "Not / İşyeri",
+    "exportTableAmount": "Tutar",
+    "exportPdfFooter": "Zarfım Bütçe Uygulaması ile oluşturuldu • kahramanapp.com"
   }
 }

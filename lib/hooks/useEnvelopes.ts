@@ -186,13 +186,14 @@ export function useMonthlyStats() {
 
   if (envelopes) {
     stats.envelopeCount = envelopes.length;
-    stats.totalBudget = envelopes.reduce((sum, e) => sum + Number(e.monthly_limit), 0);
+    // stats.totalBudget calculation based on envelope limits is removed as per user request
     stats.totalSpent = envelopes.reduce((sum, e) => sum + Number(e.spent), 0);
   }
 
   if (incomes) {
     const totalInc = incomes.reduce((sum, i) => sum + Number(i.amount), 0);
     stats.totalIncome = totalInc;
+    stats.totalBudget = totalInc; // Total budget is now based on total income
   }
 
   return stats;

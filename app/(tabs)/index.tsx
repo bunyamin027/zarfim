@@ -66,10 +66,13 @@ export default function DashboardScreen() {
   const displayEnvelopes = envelopes && envelopes.length > 0
     ? envelopes
     : mockEnvelopes;
-  const totalBudget = envelopes && envelopes.length > 0
+    
+  const hasAnyData = stats.envelopeCount > 0 || stats.totalIncome > 0 || stats.totalSpent > 0;
+  
+  const totalBudget = hasAnyData
     ? stats.totalBudget
     : mockSummary.totalBudget;
-  const totalSpent = envelopes && envelopes.length > 0
+  const totalSpent = hasAnyData
     ? stats.totalSpent
     : mockSummary.totalSpent;
 

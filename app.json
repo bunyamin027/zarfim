@@ -2,7 +2,7 @@
   "expo": {
     "name": "Zarfım",
     "slug": "zarfim",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "zarfim",
@@ -11,7 +11,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.zarfim.app",
       "usesAppleSignIn": true,
-      "buildNumber": "5"
+      "buildNumber": "6"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,7 +21,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "package": "com.zarfim.app",
-      "versionCode": 5,
+      "versionCode": 6,
       "predictiveBackGestureEnabled": false
     },
     "web": {
