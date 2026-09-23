@@ -1,11 +1,13 @@
 /**
  * LockedEnvelopeCard — Premium teaser kartı (i18n destekli)
+ * Modern minimalist tasarım, sıfır emoji
  */
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Colors, Fonts, FontSizes, Spacing, BorderRadius, Shadows } from '@/lib/theme';
+import AppIcon from './AppIcon';
 
 export default function LockedEnvelopeCard() {
   const router = useRouter();
@@ -19,14 +21,12 @@ export default function LockedEnvelopeCard() {
         pressed && styles.pressed,
       ]}
     >
-      <View style={styles.flapContainer}>
-        <View style={styles.flapTriangle} />
-      </View>
-
       <View style={styles.body}>
         <View style={styles.content}>
           <View style={styles.leftSection}>
-            <Text style={styles.icon}>🏠</Text>
+            <View style={styles.iconContainer}>
+              <AppIcon name="home-outline" size={20} color={Colors.gold} />
+            </View>
             <View style={styles.textSection}>
               <Text style={styles.name}>{t('locked.rentTracking')}</Text>
               <Text style={styles.description}>{t('locked.description')}</Text>
@@ -34,7 +34,7 @@ export default function LockedEnvelopeCard() {
           </View>
 
           <View style={styles.lockSection}>
-            <Text style={styles.lockIcon}>🔒</Text>
+            <AppIcon name="lock-closed-outline" size={18} color={Colors.gold} />
             <View style={styles.premiumBadge}>
               <Text style={styles.premiumText}>PRO</Text>
             </View>
@@ -52,38 +52,17 @@ export default function LockedEnvelopeCard() {
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.lg,
-    opacity: 0.85,
+    marginBottom: Spacing.md,
   },
   pressed: {
-    opacity: 0.7,
-    transform: [{ scale: 0.98 }],
-  },
-  flapContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    height: 18,
-    overflow: 'hidden',
-  },
-  flapTriangle: {
-    width: 0,
-    height: 0,
-    borderStyle: 'solid',
-    borderLeftWidth: 100,
-    borderRightWidth: 100,
-    borderTopWidth: 18,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderTopColor: Colors.gold,
+    opacity: 0.85,
+    transform: [{ scale: 0.99 }],
   },
   body: {
     backgroundColor: Colors.inkLight,
-    borderWidth: 2,
-    borderColor: Colors.gold,
-    borderStyle: 'dashed',
-    borderRadius: BorderRadius.md,
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
+    borderWidth: 1,
+    borderColor: 'rgba(201, 151, 58, 0.4)',
+    borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     ...Shadows.card,
   },
@@ -97,55 +76,56 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  icon: {
-    fontSize: 28,
+  iconContainer: {
+    width: 38,
+    height: 38,
+    borderRadius: BorderRadius.md,
+    backgroundColor: 'rgba(201, 151, 58, 0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginEnd: Spacing.md,
-    opacity: 0.6,
   },
   textSection: {
     flex: 1,
   },
   name: {
     fontFamily: Fonts.bodySemiBold,
-    fontSize: FontSizes.lg,
-    color: Colors.paperDark,
+    fontSize: FontSizes.md,
+    color: Colors.paper,
     marginBottom: 2,
   },
   description: {
-    fontFamily: Fonts.body,
-    fontSize: FontSizes.sm,
-    color: Colors.paperDark,
-    opacity: 0.7,
+    fontFamily: Fonts.bodyLight,
+    fontSize: FontSizes.xs,
+    color: '#8E8E93',
   },
   lockSection: {
     alignItems: 'center',
-  },
-  lockIcon: {
-    fontSize: 20,
-    marginBottom: 4,
+    gap: 4,
   },
   premiumBadge: {
-    backgroundColor: Colors.gold,
+    backgroundColor: 'rgba(201, 151, 58, 0.2)',
     borderRadius: BorderRadius.sm,
-    paddingHorizontal: Spacing.sm,
+    paddingHorizontal: Spacing.xs + 2,
     paddingVertical: 2,
   },
   premiumText: {
-    fontFamily: Fonts.bodyBold,
-    fontSize: 10,
-    color: Colors.ink,
-    letterSpacing: 1,
+    fontFamily: Fonts.bodyMedium,
+    fontSize: 9,
+    color: Colors.gold,
+    letterSpacing: 0.5,
   },
   ctaRow: {
     marginTop: Spacing.md,
-    paddingTop: Spacing.md,
+    paddingTop: Spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: Colors.gold,
+    borderTopColor: 'rgba(201, 151, 58, 0.2)',
     alignItems: 'center',
   },
   ctaText: {
-    fontFamily: Fonts.bodySemiBold,
-    fontSize: FontSizes.sm,
+    fontFamily: Fonts.bodyMedium,
+    fontSize: FontSizes.xs,
     color: Colors.gold,
+    letterSpacing: 0.2,
   },
 });

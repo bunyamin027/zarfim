@@ -1,5 +1,6 @@
 /**
  * Ayarlar Ekranı — Zarfım (i18n destekli + dil değiştirme)
+ * Modern minimalist tasarım, sıfır emoji, vektör ikonlar
  */
 import React, { useState } from 'react';
 import {
@@ -16,12 +17,14 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Ionicons } from '@expo/vector-icons';
 import * as Updates from 'expo-updates';
 import * as WebBrowser from 'expo-web-browser';
 import { Colors, Fonts, FontSizes, Spacing, BorderRadius } from '@/lib/theme';
 import { useAuthStore } from '@/store/auth';
 import { useSubscriptionStore } from '@/store/subscription';
 import { getMockPriceString } from '@/lib/revenuecat';
+import AppIcon from '@/components/AppIcon';
 import {
   SUPPORTED_LANGUAGES,
   changeLanguage,
@@ -53,10 +56,14 @@ function SettingsRow({
         pressed && styles.rowPressed,
       ]}
     >
-      <Text style={styles.rowIcon}>{icon}</Text>
+      <View style={styles.rowIconContainer}>
+        <AppIcon name={icon} size={18} color={danger ? Colors.danger : '#94A3B8'} />
+      </View>
       <Text style={[styles.rowTitle, danger && styles.rowDanger]}>{title}</Text>
       {value && <Text style={styles.rowValue}>{value}</Text>}
-      {onPress && <Text style={styles.rowChevron}>{chevron || '›'}</Text>}
+      {onPress && (
+        <Ionicons name="chevron-forward" size={16} color="#64748B" style={styles.rowChevron} />
+      )}
     </Pressable>
   );
 }
@@ -78,7 +85,7 @@ export default function SettingsScreen() {
   const handleRestore = async () => {
     const success = await restore();
     if (success) {
-      Alert.alert(t('settings.restoreSuccessTitle'), t('settings.restoreSuccessMsg'));
+      Alert.alert('Geri Yüklendi', t('settings.restoreSuccessMsg'));
     } else if (error) {
       Alert.alert(t('common.info'), error);
       clearError();
@@ -102,17 +109,16 @@ export default function SettingsScreen() {
 
   const handleDeleteAccount = () => {
     Alert.alert(
-      t('auth.deleteAccount'),
+      t('settings.deleteAccount'),
       t('auth.deleteAccountConfirm'),
       [
         { text: t('common.cancel'), style: 'cancel' },
         {
-          text: t('auth.deleteAccountButton'),
+          text: t('settings.deleteAccount'),
           style: 'destructive',
           onPress: () => {
-            // Second confirmation
             Alert.alert(
-              t('auth.deleteAccount'),
+              t('settings.deleteAccount'),
               t('auth.deleteAccountFinalConfirm'),
               [
                 { text: t('common.cancel'), style: 'cancel' },
@@ -141,7 +147,6 @@ export default function SettingsScreen() {
 
     if (lang === currentLang) return;
 
-    // RTL geçişi reload gerektirir
     const needsReload = SUPPORTED_LANGUAGES[lang].rtl !== SUPPORTED_LANGUAGES[currentLang].rtl;
 
     await changeLanguage(lang);
@@ -157,7 +162,6 @@ export default function SettingsScreen() {
               try {
                 await Updates.reloadAsync();
               } catch {
-                // Dev modda Updates.reloadAsync çalışmaz
                 Alert.alert(
                   t('common.info'),
                   'Development modunda otomatik yeniden başlatma çalışmaz. Uygulamayı manuel kapatıp açın.',
@@ -172,12 +176,14 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>{t('settings.title')}</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <Text style={styles.title}>Ayarlar</Text>
 
         {/* Profil */}
         <View style={styles.profileCard}>
-          <Text style={styles.profileEmoji}>👤</Text>
+          <View style={styles.avatarContainer}>
+            <AppIcon name="person-outline" size={24} color={Colors.gold} />
+          </View>
           <View style={styles.profileInfo}>
             <Text style={styles.profileEmail}>
               {user?.email || t('settings.notLoggedIn')}
@@ -201,7 +207,7 @@ export default function SettingsScreen() {
 
         {!isPremium && (
           <SettingsRow
-            icon="⭐"
+            icon="star-outline"
             title={t('settings.upgradePremium')}
             value={getMockPriceString()}
             onPress={() => router.push('/paywall')}
@@ -210,14 +216,14 @@ export default function SettingsScreen() {
 
         {isPremium && (
           <SettingsRow
-            icon="👑"
+            icon="sparkles-outline"
             title={t('settings.subscriptionStatus')}
             value={t('settings.premiumActive')}
           />
         )}
 
         <SettingsRow
-          icon="🔄"
+          icon="sync-outline"
           title={t('settings.restorePurchases')}
           onPress={handleRestore}
         />
@@ -233,31 +239,31 @@ export default function SettingsScreen() {
         <SectionHeader title={t('settings.preferences')} />
 
         <SettingsRow
-          icon="🌍"
+          icon="globe-outline"
           title={t('settings.language')}
           value={SUPPORTED_LANGUAGES[currentLang].nativeName}
           onPress={() => setShowLanguagePicker(true)}
         />
         <SettingsRow
-          icon="💰"
+          icon="cash-outline"
           title={t('settings.currency')}
           value={currentLang === 'ar' ? 'ر.س SAR' : '₺ TRY'}
         />
         <SettingsRow
-          icon="🔔"
+          icon="notifications-outline"
           title={t('settings.notifications')}
           value={notificationsEnabled ? t('settings.notificationsOn') : 'Kapalı'}
           onPress={() => setNotificationsEnabled(!notificationsEnabled)}
         />
 
         <SettingsRow
-          icon="💬"
+          icon="chatbubble-outline"
           title={t('settings.support')}
           value="kahramandev01@gmail.com"
           onPress={() => Linking.openURL('mailto:kahramandev01@gmail.com')}
         />
         <SettingsRow
-          icon="🌐"
+          icon="link-outline"
           title={t('settings.developer')}
           value="Kahramanapp"
           onPress={() => WebBrowser.openBrowserAsync('https://kahramanapp.com')}
@@ -267,12 +273,12 @@ export default function SettingsScreen() {
         <SectionHeader title={t('settings.legal')} />
 
         <SettingsRow
-          icon="📜"
+          icon="newspaper-outline"
           title={t('settings.termsOfUse')}
           onPress={() => WebBrowser.openBrowserAsync('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/')}
         />
         <SettingsRow
-          icon="🔒"
+          icon="lock-closed-outline"
           title={t('settings.privacyPolicy')}
           onPress={() => WebBrowser.openBrowserAsync('https://kahramanapp.com/privacy')}
         />
@@ -281,14 +287,14 @@ export default function SettingsScreen() {
         <SectionHeader title={t('settings.account')} />
 
         <SettingsRow
-          icon="🗑️"
+          icon="trash-outline"
           title={t('settings.deleteAccount')}
           onPress={handleDeleteAccount}
           danger
         />
 
         <SettingsRow
-          icon="🚪"
+          icon="log-out-outline"
           title={t('auth.signOut')}
           onPress={handleSignOut}
           danger
@@ -301,7 +307,7 @@ export default function SettingsScreen() {
         </View>
       </ScrollView>
 
-      {/* Dil seçici modal */}
+      {/* Modern Minimalist Dil Seçici Modal */}
       <Modal
         visible={showLanguagePicker}
         transparent
@@ -313,6 +319,7 @@ export default function SettingsScreen() {
           onPress={() => setShowLanguagePicker(false)}
         >
           <View style={styles.languagePicker}>
+            <View style={styles.modalGrabber} />
             <Text style={styles.languagePickerTitle}>{t('settings.language')}</Text>
 
             {(Object.entries(SUPPORTED_LANGUAGES) as [SupportedLanguage, typeof SUPPORTED_LANGUAGES[SupportedLanguage]][]).map(
@@ -332,7 +339,7 @@ export default function SettingsScreen() {
                     {lang.nativeName}
                   </Text>
                   {code === currentLang && (
-                    <Text style={styles.checkmark}>✓</Text>
+                    <Ionicons name="checkmark-circle" size={20} color={Colors.gold} />
                   )}
                 </Pressable>
               ),
@@ -375,16 +382,23 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.xl,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.06)',
   },
-  profileEmoji: {
-    fontSize: 36,
+  avatarContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(201, 151, 58, 0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginEnd: Spacing.md,
   },
   profileInfo: {
     flex: 1,
   },
   profileEmail: {
-    fontFamily: Fonts.bodySemiBold,
+    fontFamily: Fonts.bodyMedium,
     fontSize: FontSizes.md,
     color: Colors.paper,
     marginBottom: Spacing.xs,
@@ -393,28 +407,29 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     borderRadius: BorderRadius.full,
     paddingVertical: 2,
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: Spacing.sm + 2,
   },
   tierFree: {
-    backgroundColor: Colors.paperDark,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
   },
   tierPremium: {
-    backgroundColor: Colors.gold,
+    backgroundColor: 'rgba(201, 151, 58, 0.2)',
   },
   tierText: {
-    fontFamily: Fonts.bodySemiBold,
-    fontSize: FontSizes.xs,
+    fontFamily: Fonts.bodyMedium,
+    fontSize: 10,
+    letterSpacing: 0.5,
   },
   tierTextFree: {
-    color: Colors.ink,
+    color: '#94A3B8',
   },
   tierTextPremium: {
-    color: Colors.ink,
+    color: Colors.gold,
   },
   sectionHeader: {
-    fontFamily: Fonts.displayMedium,
-    fontSize: FontSizes.sm,
-    color: Colors.paperDark,
+    fontFamily: Fonts.bodyMedium,
+    fontSize: FontSizes.xs,
+    color: '#64748B',
     textTransform: 'uppercase',
     letterSpacing: 1,
     paddingHorizontal: Spacing.lg,
@@ -424,18 +439,18 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: Spacing.md + 2,
+    paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.inkLight,
+    borderBottomColor: 'rgba(255, 255, 255, 0.04)',
   },
   rowPressed: {
-    backgroundColor: Colors.inkLight,
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
   },
-  rowIcon: {
-    fontSize: 20,
-    width: 32,
-    textAlign: 'center',
+  rowIconContainer: {
+    width: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   rowTitle: {
     flex: 1,
@@ -448,53 +463,59 @@ const styles = StyleSheet.create({
     color: Colors.stamp,
   },
   rowValue: {
-    fontFamily: Fonts.bodyMedium,
+    fontFamily: Fonts.bodyLight,
     fontSize: FontSizes.sm,
-    color: Colors.paperDark,
-    marginEnd: Spacing.sm,
+    color: '#94A3B8',
+    marginEnd: Spacing.xs,
   },
   rowChevron: {
-    fontFamily: Fonts.body,
-    fontSize: FontSizes.xl,
-    color: Colors.paperDark,
+    marginStart: Spacing.xs,
   },
   loadingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    gap: Spacing.sm,
   },
   loadingText: {
-    fontFamily: Fonts.body,
-    fontSize: FontSizes.sm,
-    color: Colors.paperDark,
-    marginStart: Spacing.sm,
+    fontFamily: Fonts.bodyLight,
+    fontSize: FontSizes.xs,
+    color: '#94A3B8',
   },
   appInfo: {
     alignItems: 'center',
-    paddingTop: Spacing.xxxl,
-    paddingBottom: Spacing.lg,
+    paddingVertical: Spacing.xxl,
   },
   appInfoText: {
-    fontFamily: Fonts.body,
+    fontFamily: Fonts.bodyLight,
     fontSize: FontSizes.xs,
-    color: Colors.inkLight,
+    color: '#64748B',
     marginBottom: 2,
   },
-
-  // Language picker modal
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    backgroundColor: 'rgba(0,0,0,0.65)',
     justifyContent: 'center',
     alignItems: 'center',
+    padding: Spacing.xl,
   },
   languagePicker: {
-    backgroundColor: Colors.inkLight,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.ink,
+    borderRadius: BorderRadius.xl,
     padding: Spacing.xl,
-    width: '80%',
+    width: '100%',
     maxWidth: 320,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  modalGrabber: {
+    width: 32,
+    height: 3,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: Spacing.md,
   },
   languagePickerTitle: {
     fontFamily: Fonts.display,
@@ -513,20 +534,16 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   languageOptionActive: {
-    backgroundColor: Colors.gold + '20',
+    backgroundColor: 'rgba(201, 151, 58, 0.12)',
   },
   languageOptionText: {
-    fontFamily: Fonts.bodySemiBold,
-    fontSize: FontSizes.lg,
+    fontFamily: Fonts.body,
+    fontSize: FontSizes.md,
     color: Colors.paper,
   },
   languageOptionTextActive: {
     color: Colors.gold,
-  },
-  checkmark: {
-    fontSize: 18,
-    color: Colors.gold,
-    fontWeight: 'bold',
+    fontFamily: Fonts.bodySemiBold,
   },
   languageCancelButton: {
     marginTop: Spacing.lg,
@@ -534,8 +551,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
   },
   languageCancelText: {
-    fontFamily: Fonts.bodyMedium,
-    fontSize: FontSizes.md,
-    color: Colors.paperDark,
+    fontFamily: Fonts.bodyLight,
+    fontSize: FontSizes.sm,
+    color: '#94A3B8',
   },
 });

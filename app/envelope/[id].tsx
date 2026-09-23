@@ -20,6 +20,8 @@ import { useEnvelopes, useEnvelopeTransactions } from '@/lib/hooks/useEnvelopes'
 import { useEnvelopesStore } from '@/store/envelopes';
 import { formatCurrency } from '@/lib/formatCurrency';
 import PrimaryButton from '@/components/PrimaryButton';
+import SwipeableItem from '@/components/SwipeableItem';
+import AppIcon from '@/components/AppIcon';
 import { queryClient } from '@/lib/queryClient';
 
 export default function EnvelopeDetailScreen() {
@@ -118,14 +120,16 @@ export default function EnvelopeDetailScreen() {
         {/* Zarf Kartı Tasarımı */}
         <View style={styles.envelopeCard}>
           <View style={styles.cardHeader}>
-            <Text style={styles.icon}>{envelope.icon}</Text>
+            <View style={[styles.iconContainer, { backgroundColor: envelope.color || Colors.inkLight }]}>
+              <AppIcon name={envelope.icon} size={22} color="#FFFFFF" />
+            </View>
             <View style={styles.cardHeaderInfo}>
               <Text style={styles.envelopeName}>{envelope.name}</Text>
               <Text style={styles.amountsText}>
-                <Text style={{ color: progressColor, fontFamily: Fonts.bodyBold }}>
+                <Text style={{ color: progressColor, fontFamily: Fonts.bodySemiBold }}>
                   {formatCurrency(spent)}
                 </Text>
-                <Text style={{ color: Colors.inkLight }}> / {formatCurrency(limit)}</Text>
+                <Text style={{ color: '#8E8E93' }}> / {formatCurrency(limit)}</Text>
               </Text>
             </View>
           </View>
@@ -154,16 +158,16 @@ export default function EnvelopeDetailScreen() {
         <View style={styles.actionsRow}>
           <PrimaryButton
             title={t('envelopeDetail.addExpenseForThis')}
-            icon="💸"
+            icon="add-outline"
             onPress={() =>
               router.push({ pathname: '/add-expense', params: { envelopeId: envelope.id } })
             }
-            style={styles.addExpenseBtn}
+            style={styles.actionButton}
           />
         </View>
 
         {/* İşlem Geçmişi */}
-        <View style={styles.sectionHeaderRow}>
+        <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>{t('envelopeDetail.transactions')}</Text>
           <Pressable onPress={handleDeleteEnvelope}>
             <Text style={styles.deleteEnvelopeText}>{t('common.delete')}</Text>
@@ -172,30 +176,29 @@ export default function EnvelopeDetailScreen() {
 
         {!transactions || transactions.length === 0 ? (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyIcon}>📝</Text>
+            <AppIcon name="receipt-outline" size={32} color="#8E8E93" />
             <Text style={styles.emptyText}>{t('envelopeDetail.noTransactions')}</Text>
           </View>
         ) : (
           transactions.map((tx) => (
-            <View key={tx.id} style={styles.txRow}>
-              <View style={styles.txInfo}>
-                <Text style={styles.txNote}>{tx.note || envelope.name}</Text>
-                <Text style={styles.txDate}>
-                  {new Date(tx.occurred_at || (tx as any).created_at).toLocaleDateString(undefined, {
-                    day: 'numeric',
-                    month: 'short',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </Text>
+            <SwipeableItem key={tx.id} onDelete={() => handleDeleteTx(tx.id)}>
+              <View style={styles.txRow}>
+                <View style={styles.txInfo}>
+                  <Text style={styles.txNote}>{tx.note || envelope.name}</Text>
+                  <Text style={styles.txDate}>
+                    {new Date(tx.occurred_at || (tx as any).created_at).toLocaleDateString(undefined, {
+                      day: 'numeric',
+                      month: 'short',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </Text>
+                </View>
+                <View style={styles.txRight}>
+                  <Text style={styles.txAmount}>−{formatCurrency(tx.amount)}</Text>
+                </View>
               </View>
-              <View style={styles.txRight}>
-                <Text style={styles.txAmount}>−{formatCurrency(tx.amount)}</Text>
-                <Pressable onPress={() => handleDeleteTx(tx.id)} style={styles.deleteTxBtn}>
-                  <Text style={styles.deleteTxText}>✕</Text>
-                </Pressable>
-              </View>
-            </View>
+            </SwipeableItem>
           ))
         )}
       </ScrollView>
@@ -267,9 +270,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.lg,
   },
-  icon: {
-    fontSize: 40,
+  iconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: BorderRadius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginEnd: Spacing.md,
+  },
+  actionButton: {
+    width: '100%',
   },
   cardHeaderInfo: {
     flex: 1,

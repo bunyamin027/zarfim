@@ -5,10 +5,8 @@
  * Giriş yapılmamışsa auth ekranına, yapılmışsa tabs'a yönlendirir.
  */
 import {
-  Fraunces_500Medium,
-  Fraunces_700Bold,
-} from '@expo-google-fonts/fraunces';
-import {
+  Manrope_200ExtraLight,
+  Manrope_300Light,
   Manrope_400Regular,
   Manrope_500Medium,
   Manrope_600SemiBold,
@@ -16,10 +14,10 @@ import {
 } from '@expo-google-fonts/manrope';
 import { useFonts } from 'expo-font';
 import { Stack, useRouter, useSegments } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import '@/lib/i18n'; // i18n modülünü başlat
 
@@ -37,12 +35,10 @@ export const unstable_settings = {
   initialRouteName: '(tabs)',
 };
 
-SplashScreen.preventAutoHideAsync();
-
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    Fraunces_500Medium,
-    Fraunces_700Bold,
+    Manrope_200ExtraLight,
+    Manrope_300Light,
     Manrope_400Regular,
     Manrope_500Medium,
     Manrope_600SemiBold,
@@ -73,21 +69,13 @@ export default function RootLayout() {
     }
   }, [isAuthenticated]);
 
-  useEffect(() => {
-    if (loaded && !isAuthLoading) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded, isAuthLoading]);
-
-  if (!loaded || isAuthLoading) {
-    return null;
-  }
-
   return (
-    <QueryClientProvider client={queryClient}>
-      <StatusBar style="light" />
-      <RootLayoutNav />
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
+        <StatusBar style="light" />
+        <RootLayoutNav />
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }
 

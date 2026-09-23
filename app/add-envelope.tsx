@@ -1,6 +1,6 @@
 /**
  * Add / Edit Envelope Modal — Zarfım
- * Zarf oluşturma ve düzenleme modalı.
+ * Modern minimalist tasarım, sıfır emoji, vektör ikon seçici
  */
 import React, { useState } from 'react';
 import {
@@ -17,15 +17,33 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors, Fonts, FontSizes, Spacing, BorderRadius } from '@/lib/theme';
 import PrimaryButton from '@/components/PrimaryButton';
+import AppIcon from '@/components/AppIcon';
 import { useEnvelopesStore } from '@/store/envelopes';
 import { useEnvelopes } from '@/lib/hooks/useEnvelopes';
 import { useSubscriptionStore } from '@/store/subscription';
 import { queryClient } from '@/lib/queryClient';
 import { getCurrencySymbol } from '@/lib/formatCurrency';
 
-const PRESET_ICONS = ['🛒', '🚌', '🎬', '🏠', '📄', '🍕', '✈️', '💊', '🎁', '🎮', '☕', '🚗', '📚', '👕'];
+const PRESET_ICONS = [
+  'cart-outline',
+  'car-outline',
+  'film-outline',
+  'home-outline',
+  'document-text-outline',
+  'fast-food-outline',
+  'airplane-outline',
+  'medkit-outline',
+  'gift-outline',
+  'game-controller-outline',
+  'cafe-outline',
+  'book-outline',
+  'shirt-outline',
+  'fitness-outline',
+];
+
 const PRESET_COLORS = ['#6F8F6A', '#E8963A', '#C1442D', '#C9973A', '#2A3A5C', '#8E44AD', '#27AE60'];
 
 export default function AddEnvelopeModal() {
@@ -42,7 +60,7 @@ export default function AddEnvelopeModal() {
 
   const [name, setName] = useState(existingEnv?.name || '');
   const [limit, setLimit] = useState(existingEnv?.monthly_limit ? existingEnv.monthly_limit.toString() : '');
-  const [icon, setIcon] = useState(existingEnv?.icon || '🛒');
+  const [icon, setIcon] = useState(existingEnv?.icon || PRESET_ICONS[0]);
   const [color, setColor] = useState(existingEnv?.color || PRESET_COLORS[0]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -57,7 +75,7 @@ export default function AddEnvelopeModal() {
     // Freemium kontrolü — Yeni zarf eklenirken 3 zarf sınırı
     if (!isEditing && !isPremium && (envelopes?.length || 0) >= 3) {
       Alert.alert(
-        t('addEnvelopeModal.limitReachedTitle'),
+        'Ücretsiz Zarf Sınırı',
         t('addEnvelopeModal.limitReachedMsg'),
         [
           { text: t('common.cancel'), style: 'cancel' },
@@ -109,23 +127,25 @@ export default function AddEnvelopeModal() {
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
+        <View style={styles.sheetHandle} />
+
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.closeButton}>
-            <Text style={styles.closeText}>✕</Text>
+            <Ionicons name="close" size={20} color={Colors.paper} />
           </Pressable>
           <Text style={styles.title}>
-            {isEditing ? t('addEnvelopeModal.editTitle') : t('addEnvelopeModal.title')}
+            {isEditing ? 'Zarfı Düzenle' : 'Yeni Zarf Oluştur'}
           </Text>
-          <View style={{ width: 40 }} />
+          <View style={{ width: 36 }} />
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           {/* Zarf Adı */}
           <Text style={styles.label}>{t('addEnvelopeModal.name')}</Text>
           <TextInput
-            style={styles.input}
+            style={styles.nameInput}
             placeholder={t('addEnvelopeModal.namePlaceholder')}
-            placeholderTextColor={Colors.paperDark}
+            placeholderTextColor="#64748B"
             value={name}
             onChangeText={setName}
             autoFocus={!isEditing}
@@ -138,7 +158,7 @@ export default function AddEnvelopeModal() {
             <TextInput
               style={styles.amountInput}
               placeholder="0.00"
-              placeholderTextColor={Colors.paperDark}
+              placeholderTextColor="#64748B"
               keyboardType="decimal-pad"
               value={limit}
               onChangeText={setLimit}
@@ -148,18 +168,21 @@ export default function AddEnvelopeModal() {
           {/* İkon Seçimi */}
           <Text style={styles.label}>{t('addEnvelopeModal.icon')}</Text>
           <View style={styles.iconGrid}>
-            {PRESET_ICONS.map((item) => (
-              <Pressable
-                key={item}
-                onPress={() => setIcon(item)}
-                style={[
-                  styles.iconOption,
-                  icon === item && styles.iconOptionSelected,
-                ]}
-              >
-                <Text style={styles.iconText}>{item}</Text>
-              </Pressable>
-            ))}
+            {PRESET_ICONS.map((item) => {
+              const isSelected = icon === item;
+              return (
+                <Pressable
+                  key={item}
+                  onPress={() => setIcon(item)}
+                  style={[
+                    styles.iconOption,
+                    isSelected && styles.iconOptionSelected,
+                  ]}
+                >
+                  <AppIcon name={item} size={20} color={isSelected ? Colors.gold : '#94A3B8'} />
+                </Pressable>
+              );
+            })}
           </View>
 
           {/* Renk Seçimi */}
@@ -175,7 +198,7 @@ export default function AddEnvelopeModal() {
                   color === c && styles.colorOptionSelected,
                 ]}
               >
-                {color === c && <Text style={styles.checkmark}>✓</Text>}
+                {color === c && <Ionicons name="checkmark" size={14} color="#FFFFFF" />}
               </Pressable>
             ))}
           </View>
@@ -183,7 +206,7 @@ export default function AddEnvelopeModal() {
           <View style={styles.submitContainer}>
             <PrimaryButton
               title={isEditing ? t('addEnvelopeModal.submitEdit') : t('addEnvelopeModal.submit')}
-              icon={isEditing ? '💾' : '✉️'}
+              icon={isEditing ? 'checkmark-outline' : 'add-outline'}
               onPress={handleSubmit}
               disabled={isSubmitting || !name || !limit}
             />
@@ -199,38 +222,48 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.ink,
   },
+  sheetHandle: {
+    width: 36,
+    height: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.xs,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
+    paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.inkLight,
+    borderBottomColor: 'rgba(255, 255, 255, 0.06)',
   },
   closeButton: {
-    padding: Spacing.sm,
-  },
-  closeText: {
-    fontSize: 22,
-    color: Colors.paperDark,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     fontFamily: Fonts.display,
-    fontSize: FontSizes.xl,
+    fontSize: FontSizes.lg,
     color: Colors.paper,
   },
   scrollContent: {
     padding: Spacing.xl,
   },
   label: {
-    fontFamily: Fonts.bodySemiBold,
-    fontSize: FontSizes.md,
-    color: Colors.paper,
+    fontFamily: Fonts.bodyMedium,
+    fontSize: FontSizes.sm,
+    color: '#CBD5E1',
     marginBottom: Spacing.sm,
     marginTop: Spacing.lg,
   },
-  input: {
+  nameInput: {
     backgroundColor: Colors.inkLight,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.lg,
@@ -239,27 +272,27 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.md,
     color: Colors.paper,
     borderWidth: 1,
-    borderColor: Colors.paperDark + '40',
+    borderColor: 'rgba(255, 255, 255, 0.08)',
   },
   amountInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.inkLight,
-    borderRadius: BorderRadius.lg,
-    paddingHorizontal: Spacing.xl,
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    borderWidth: 1.5,
-    borderColor: Colors.gold,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   currencySymbol: {
-    fontFamily: Fonts.display,
+    fontFamily: Fonts.bodyLight,
     fontSize: 28,
     color: Colors.gold,
-    marginEnd: Spacing.md,
+    marginEnd: Spacing.sm,
   },
   amountInput: {
     flex: 1,
-    fontFamily: Fonts.display,
+    fontFamily: Fonts.bodySemiBold,
     fontSize: 28,
     color: Colors.paper,
   },
@@ -269,41 +302,34 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   iconOption: {
-    width: 48,
-    height: 48,
+    width: 44,
+    height: 44,
     borderRadius: BorderRadius.md,
     backgroundColor: Colors.inkLight,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: Colors.paperDark + '30',
   },
   iconOptionSelected: {
     borderColor: Colors.gold,
-    backgroundColor: Colors.gold + '30',
-  },
-  iconText: {
-    fontSize: 24,
+    backgroundColor: 'rgba(201, 151, 58, 0.12)',
   },
   colorGrid: {
     flexDirection: 'row',
-    gap: Spacing.md,
+    gap: Spacing.sm,
+    flexWrap: 'wrap',
   },
   colorOption: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
   },
   colorOptionSelected: {
-    borderWidth: 3,
-    borderColor: Colors.paper,
-  },
-  checkmark: {
-    color: Colors.white,
-    fontWeight: 'bold',
-    fontSize: 16,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
   },
   submitContainer: {
     marginTop: Spacing.xxl,

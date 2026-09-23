@@ -1,5 +1,6 @@
 /**
  * Add Income Category Modal — Zarfım
+ * Modern minimalist tasarım, sıfır emoji, vektör ikonlar
  */
 import React, { useState } from 'react';
 import {
@@ -16,12 +17,24 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors, Fonts, FontSizes, Spacing, BorderRadius } from '@/lib/theme';
 import PrimaryButton from '@/components/PrimaryButton';
+import AppIcon from '@/components/AppIcon';
 import { useEnvelopesStore } from '@/store/envelopes';
 import { queryClient } from '@/lib/queryClient';
 
-const PRESET_ICONS = ['💰', '💳', '🏢', '📈', '🎁', '🏦', '📱', '🚗'];
+const PRESET_ICONS = [
+  'wallet-outline',
+  'card-outline',
+  'business-outline',
+  'trending-up-outline',
+  'gift-outline',
+  'library-outline',
+  'phone-portrait-outline',
+  'car-outline',
+];
+
 const PRESET_COLORS = ['#6F8F6A', '#E8963A', '#C1442D', '#C9973A', '#2A3A5C', '#8E44AD', '#27AE60'];
 
 export default function AddIncomeCategoryModal() {
@@ -31,7 +44,7 @@ export default function AddIncomeCategoryModal() {
   const addIncomeCategory = useEnvelopesStore((s) => s.addIncomeCategory);
 
   const [name, setName] = useState('');
-  const [icon, setIcon] = useState('💰');
+  const [icon, setIcon] = useState(PRESET_ICONS[0]);
   const [color, setColor] = useState(PRESET_COLORS[0]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -65,12 +78,14 @@ export default function AddIncomeCategoryModal() {
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
+        <View style={styles.sheetHandle} />
+
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.closeButton}>
-            <Text style={styles.closeText}>✕</Text>
+            <Ionicons name="close" size={20} color={Colors.paper} />
           </Pressable>
-          <Text style={styles.title}>{t('addIncomeCategoryModal.title')}</Text>
-          <View style={{ width: 40 }} />
+          <Text style={styles.title}>Gelir Kategorisi Oluştur</Text>
+          <View style={{ width: 36 }} />
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
@@ -79,7 +94,7 @@ export default function AddIncomeCategoryModal() {
           <TextInput
             style={styles.input}
             placeholder={t('addIncomeCategoryModal.namePlaceholder')}
-            placeholderTextColor={Colors.paperDark}
+            placeholderTextColor="#64748B"
             value={name}
             onChangeText={setName}
             autoFocus
@@ -88,18 +103,21 @@ export default function AddIncomeCategoryModal() {
           {/* İkon Seçimi */}
           <Text style={styles.label}>{t('addEnvelopeModal.icon')}</Text>
           <View style={styles.iconGrid}>
-            {PRESET_ICONS.map((item) => (
-              <Pressable
-                key={item}
-                onPress={() => setIcon(item)}
-                style={[
-                  styles.iconOption,
-                  icon === item && styles.iconOptionSelected,
-                ]}
-              >
-                <Text style={styles.iconText}>{item}</Text>
-              </Pressable>
-            ))}
+            {PRESET_ICONS.map((item) => {
+              const isSelected = icon === item;
+              return (
+                <Pressable
+                  key={item}
+                  onPress={() => setIcon(item)}
+                  style={[
+                    styles.iconOption,
+                    isSelected && styles.iconOptionSelected,
+                  ]}
+                >
+                  <AppIcon name={item} size={20} color={isSelected ? Colors.gold : '#94A3B8'} />
+                </Pressable>
+              );
+            })}
           </View>
 
           {/* Renk Seçimi */}
@@ -115,7 +133,7 @@ export default function AddIncomeCategoryModal() {
                   color === c && styles.colorOptionSelected,
                 ]}
               >
-                {color === c && <Text style={styles.checkmark}>✓</Text>}
+                {color === c && <Ionicons name="checkmark" size={14} color="#FFFFFF" />}
               </Pressable>
             ))}
           </View>
@@ -123,7 +141,7 @@ export default function AddIncomeCategoryModal() {
           <View style={styles.submitContainer}>
             <PrimaryButton
               title={t('addIncomeCategoryModal.submit')}
-              icon="💵"
+              icon="add-outline"
               onPress={handleSubmit}
               disabled={isSubmitting || !name}
             />
@@ -139,34 +157,44 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.ink,
   },
+  sheetHandle: {
+    width: 36,
+    height: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.xs,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
+    paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.inkLight,
+    borderBottomColor: 'rgba(255, 255, 255, 0.06)',
   },
   closeButton: {
-    padding: Spacing.sm,
-  },
-  closeText: {
-    fontSize: 22,
-    color: Colors.paperDark,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     fontFamily: Fonts.display,
-    fontSize: FontSizes.xl,
+    fontSize: FontSizes.lg,
     color: Colors.paper,
   },
   scrollContent: {
     padding: Spacing.xl,
   },
   label: {
-    fontFamily: Fonts.bodySemiBold,
-    fontSize: FontSizes.md,
-    color: Colors.paper,
+    fontFamily: Fonts.bodyMedium,
+    fontSize: FontSizes.sm,
+    color: '#CBD5E1',
     marginBottom: Spacing.sm,
     marginTop: Spacing.lg,
   },
@@ -179,7 +207,7 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.md,
     color: Colors.paper,
     borderWidth: 1,
-    borderColor: Colors.paperDark + '40',
+    borderColor: 'rgba(255, 255, 255, 0.08)',
   },
   iconGrid: {
     flexDirection: 'row',
@@ -187,41 +215,34 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   iconOption: {
-    width: 48,
-    height: 48,
+    width: 44,
+    height: 44,
     borderRadius: BorderRadius.md,
     backgroundColor: Colors.inkLight,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: Colors.paperDark + '30',
   },
   iconOptionSelected: {
-    borderColor: Colors.sage,
-    backgroundColor: Colors.sage + '30',
-  },
-  iconText: {
-    fontSize: 24,
+    borderColor: Colors.gold,
+    backgroundColor: 'rgba(201, 151, 58, 0.12)',
   },
   colorGrid: {
     flexDirection: 'row',
-    gap: Spacing.md,
+    gap: Spacing.sm,
+    flexWrap: 'wrap',
   },
   colorOption: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
   },
   colorOptionSelected: {
-    borderWidth: 3,
-    borderColor: Colors.paper,
-  },
-  checkmark: {
-    color: Colors.white,
-    fontWeight: 'bold',
-    fontSize: 16,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
   },
   submitContainer: {
     marginTop: Spacing.xxl,

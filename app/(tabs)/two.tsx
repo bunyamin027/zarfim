@@ -26,6 +26,7 @@ import { useTransactions } from '@/lib/hooks/useTransactions';
 import { useIncomes } from '@/lib/hooks/useEnvelopes';
 import { formatCurrency } from '@/lib/formatCurrency';
 import PrimaryButton from '@/components/PrimaryButton';
+import AppIcon from '@/components/AppIcon';
 import { isRTL } from '@/lib/i18n';
 
 export default function ReportsScreen() {
@@ -297,7 +298,7 @@ export default function ReportsScreen() {
         {/* AI Insights Card */}
         <View style={styles.aiCard}>
           <View style={styles.aiHeader}>
-            <Text style={styles.aiIcon}>🤖</Text>
+            <AppIcon name="hardware-chip-outline" size={20} color={Colors.gold} />
             <Text style={styles.aiTitle}>{t('reports.aiInsightsTitle')}</Text>
           </View>
           <Text style={styles.aiText}>
@@ -405,14 +406,14 @@ export default function ReportsScreen() {
         <View style={styles.exportContainer}>
           <PrimaryButton
             title={isExportingPdf ? t('reports.exportingPdf') : t('reports.exportPdf')}
-            icon={isExportingPdf ? '⏳' : isPremium ? '📄' : '🔒'}
+            icon={isExportingPdf ? 'hourglass-outline' : isPremium ? 'document-text-outline' : 'lock-closed-outline'}
             onPress={handleExportPDF}
             style={!isPremium ? styles.lockedButton : undefined}
           />
           <View style={{ height: Spacing.sm }} />
           <PrimaryButton
             title={isExportingCsv ? t('reports.exporting') : t('reports.exportCsv')}
-            icon={isExportingCsv ? '⏳' : isPremium ? '📊' : '🔒'}
+            icon={isExportingCsv ? 'hourglass-outline' : isPremium ? 'bar-chart-outline' : 'lock-closed-outline'}
             onPress={handleExportCSV}
             style={!isPremium ? styles.lockedButton : { backgroundColor: Colors.inkLight }}
           />

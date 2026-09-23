@@ -24,13 +24,14 @@ export const Colors = {
 } as const;
 
 export const Fonts = {
-  display: 'Fraunces_700Bold',       // Başlıklar
-  displayMedium: 'Fraunces_500Medium', // Alt başlıklar
-  body: 'Manrope_400Regular',        // Gövde metni
-  bodyMedium: 'Manrope_500Medium',   // Vurgulu gövde
-  bodySemiBold: 'Manrope_600SemiBold', // Yarı kalın
-  bodyBold: 'Manrope_700Bold',       // Kalın gövde
-  // Cairo — Arapça (Faz 5'te aktif edilecek)
+  display: 'Manrope_600SemiBold',       // Başlıklar — modern ve yalnızca hafif bold
+  displayMedium: 'Manrope_500Medium',   // Alt başlıklar
+  body: 'Manrope_300Light',             // Gövde metni — modern minimalist thin
+  bodyLight: 'Manrope_300Light',        // İnce gövde
+  bodyExtraLight: 'Manrope_200ExtraLight', // Ekstra ince
+  bodyMedium: 'Manrope_400Regular',     // Standart gövde
+  bodySemiBold: 'Manrope_500Medium',    // Hafif vurgulu
+  bodyBold: 'Manrope_600SemiBold',      // Kalın gövde (hafif bold)
 } as const;
 
 export const FontSizes = {

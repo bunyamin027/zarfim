@@ -26,7 +26,7 @@
     "expenses": "Giderler"
   },
   "dashboard": {
-    "title": "📬 Zarfım",
+    "title": "Zarfım",
     "myEnvelopes": "Zarflarım",
     "addExpense": "Harcama Ekle",
     "addEnvelope": "+ Yeni Zarf Ekle",
@@ -35,7 +35,7 @@
     "remaining": "Kalan",
     "over": "Aşım",
     "loadingEnvelopes": "Zarflar yükleniyor...",
-    "loadError": "⚠️ Veri yüklenemedi. Yerel veriler gösteriliyor.",
+    "loadError": "Veri yüklenemedi. Yerel veriler gösteriliyor.",
     "used": "kullanıldı",
     "emptyStateTitle": "Bütçeni Yönetmeye Başla!",
     "emptyStateDesc": "Henüz hiç zarfın yok. Harcamalarını kontrol altına almak için ilk zarfını oluştur."
@@ -49,7 +49,7 @@
     "bills": "Faturalar"
   },
   "addExpenseModal": {
-    "title": "💸 Harcama Ekle",
+    "title": "Harcama Ekle",
     "selectEnvelope": "Zarf Seçin",
     "amount": "Tutar",
     "amountPlaceholder": "0.00",
@@ -68,7 +68,7 @@
     "noIncomes": "Henüz gelir eklenmedi."
   },
   "addIncomeModal": {
-    "title": "💵 Gelir Ekle",
+    "title": "Gelir Ekle",
     "selectCategory": "Kategori Seçin (Opsiyonel)",
     "amount": "Tutar",
     "amountPlaceholder": "0.00",
@@ -89,8 +89,8 @@
     "noExpenses": "Henüz gider eklenmedi."
   },
   "addEnvelopeModal": {
-    "title": "✉️ Yeni Zarf Oluştur",
-    "editTitle": "✏️ Zarfı Düzenle",
+    "title": "Yeni Zarf Oluştur",
+    "editTitle": "Zarfı Düzenle",
     "name": "Zarf Adı",
     "namePlaceholder": "Örn: Kira, Tatil, Restoran",
     "limit": "Aylık Bütçe Limiti",
@@ -100,7 +100,7 @@
     "submit": "Zarfı Oluştur",
     "submitEdit": "Değişiklikleri Kaydet",
     "fillAll": "Lütfen zarf adını ve geçerli bir bütçe limiti girin.",
-    "limitReachedTitle": "🔒 Ücretsiz Zarf Sınırı",
+    "limitReachedTitle": "Ücretsiz Zarf Sınırı",
     "limitReachedMsg": "Ücretsiz planda en fazla 3 zarf oluşturabilirsiniz. Sınırsız zarf oluşturmak için Premium'a yükseltin!"
   },
   "envelopeDetail": {
@@ -114,7 +114,7 @@
   "locked": {
     "rentTracking": "Kira Takibi",
     "description": "Premium ile sınırsız zarf oluştur",
-    "upgradeCta": "👑 Premium'a yükselt →"
+    "upgradeCta": "Premium'a yükselt →"
   },
   "auth": {
     "title": "Zarfım",
@@ -150,16 +150,16 @@
     "trialNote": "Deneme süresi sonunda otomatik yenilenir.\nİstediğiniz zaman iptal edebilirsiniz.",
     "upgrade": "Premium'a Yükselt",
     "restore": "Satın almaları geri yükle",
-    "premiumActive": "🎉 Premium Aktif",
+    "premiumActive": "Premium Aktif",
     "premiumActiveMsg": "Premium üyeliğiniz zaten aktif!",
     "devMode": "Geliştirme Modu",
     "devModeMsg": "RevenueCat yapılandırılmamış. Gerçek satın alma için EAS Build ile derleyin.",
-    "devModeNote": "🔧 Geliştirme modu — RevenueCat yapılandırılmamış.\nPlaceholder fiyat gösteriliyor.",
+    "devModeNote": "Geliştirme modu — RevenueCat yapılandırılmamış.\nDemo fiyat gösteriliyor.",
     "productError": "Ürün bilgisi yüklenemedi",
-    "purchaseSuccess": "🎉 Hoş Geldiniz!",
+    "purchaseSuccess": "Hoş Geldiniz!",
     "purchaseSuccessMsg": "Premium üyeliğiniz başarıyla aktifleştirildi!",
     "goBack": "Zarflarıma Dön",
-    "restoreSuccess": "✅ Geri Yüklendi",
+    "restoreSuccess": "Geri Yüklendi",
     "restoreSuccessMsg": "Premium üyeliğiniz geri yüklendi!",
     "legal": "Abonelik Apple ID / Google Play hesabınız üzerinden faturalandırılır. Mevcut dönem bitmeden en az 24 saat önce iptal edilmezse otomatik yenilenir.",
     "features": {
@@ -178,7 +178,7 @@
     }
   },
   "settings": {
-    "title": "⚙️ Ayarlar",
+    "title": "Ayarlar",
     "notLoggedIn": "Giriş yapılmamış",
     "subscription": "Abonelik",
     "upgradePremium": "Premium'a Yükselt",
@@ -198,8 +198,8 @@
     "appVersion": "Zarfım v1.0.0",
     "appTagline": "Zarf usulü bütçe yönetimi",
     "free": "Ücretsiz",
-    "premium": "👑 Premium",
-    "restoreSuccessTitle": "✅ Geri Yüklendi",
+    "premium": "Premium",
+    "restoreSuccessTitle": "Geri Yüklendi",
     "restoreSuccessMsg": "Premium üyeliğiniz başarıyla geri yüklendi!",
     "languageChangeTitle": "Dil Değiştir",
     "languageChangeMsg": "Dil değişikliği uygulamanın yeniden başlatılmasını gerektirir.",
@@ -240,7 +240,7 @@
     "totalExpense": "Toplam Gider:",
     "netStatus": "Net Durum:",
     "notEnoughDataForTrend": "Trend için daha fazla veriye ihtiyaç var.",
-    "exportPdfHeaderTitle": "📬 Zarfım — Harcama Raporu",
+    "exportPdfHeaderTitle": "Zarfım — Harcama Raporu",
     "exportTableDate": "Tarih",
     "exportTableEnvelope": "Zarf",
     "exportTableNote": "Not / İşyeri",

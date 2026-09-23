@@ -17,6 +17,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Colors, Fonts, FontSizes, Spacing, BorderRadius } from '@/lib/theme';
 import PrimaryButton from '@/components/PrimaryButton';
+import AppIcon from '@/components/AppIcon';
 import { useAuthStore } from '@/store/auth';
 
 export default function AuthScreen() {
@@ -58,7 +59,9 @@ export default function AuthScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.header}>
-          <Text style={styles.logo}>📬</Text>
+          <View style={styles.logoBadge}>
+            <AppIcon name="mail-outline" size={32} color={Colors.gold} />
+          </View>
           <Text style={styles.title}>{t('auth.title')}</Text>
           <Text style={styles.subtitle}>{t('auth.subtitle')}</Text>
         </View>
@@ -109,7 +112,7 @@ export default function AuthScreen() {
               <PrimaryButton
                 title={isSignUp ? t('auth.signUp') : t('auth.signIn')}
                 onPress={handleSubmit}
-                icon={isSignUp ? '✉️' : '📬'}
+                icon={isSignUp ? 'person-add-outline' : 'log-in-outline'}
               />
             )}
           </View>
@@ -185,9 +188,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.xxl,
   },
-  logo: {
-    fontSize: 56,
-    marginBottom: Spacing.sm,
+  logoBadge: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(201, 151, 58, 0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.md,
   },
   title: {
     fontFamily: Fonts.display,

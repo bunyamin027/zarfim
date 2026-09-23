@@ -26,7 +26,7 @@
     "expenses": "النفقات"
   },
   "dashboard": {
-    "title": "📬 مظروفي",
+    "title": "مظروفي",
     "myEnvelopes": "مظاريفي",
     "addExpense": "إضافة مصروف",
     "addEnvelope": "+ إضافة مظروف جديد",
@@ -35,7 +35,7 @@
     "remaining": "المتبقي",
     "over": "تجاوز",
     "loadingEnvelopes": "جارٍ تحميل المظاريف...",
-    "loadError": "⚠️ تعذّر تحميل البيانات. يتم عرض بيانات محليّة.",
+    "loadError": "تعذّر تحميل البيانات. يتم عرض بيانات محليّة.",
     "used": "مستخدم",
     "emptyStateTitle": "ابدأ بإدارة ميزانيتك!",
     "emptyStateDesc": "ليس لديك أي مظاريف بعد. قم بإنشاء أول مظروف لك للسيطرة على نفقاتك."
@@ -49,7 +49,7 @@
     "bills": "الفواتير"
   },
   "addExpenseModal": {
-    "title": "💸 إضافة نفقة",
+    "title": "إضافة نفقة",
     "selectEnvelope": "اختر ظرفًا",
     "amount": "المبلغ",
     "amountPlaceholder": "0.00",
@@ -68,7 +68,7 @@
     "noIncomes": "لم تتم إضافة أي دخل بعد."
   },
   "addIncomeModal": {
-    "title": "💵 إضافة دخل",
+    "title": "إضافة دخل",
     "selectCategory": "اختر فئة (اختياري)",
     "amount": "المبلغ",
     "amountPlaceholder": "0.00",
@@ -89,8 +89,8 @@
     "noExpenses": "لم تتم إضافة أي نفقات بعد."
   },
   "addEnvelopeModal": {
-    "title": "✉️ إنشاء مظروف جديد",
-    "editTitle": "✏️ تعديل المظروف",
+    "title": "إنشاء مظروف جديد",
+    "editTitle": "تعديل المظروف",
     "name": "اسم المظروف",
     "namePlaceholder": "مثال: الإيجار، السفر، المطاعم",
     "limit": "حد الميزانية الشهرية",
@@ -100,7 +100,7 @@
     "submit": "إنشاء المظروف",
     "submitEdit": "حفظ التغييرات",
     "fillAll": "يرجى إدخال اسم المظروف وحد ميزانية صحيح.",
-    "limitReachedTitle": "🔒 حد المظاريف المجاني",
+    "limitReachedTitle": "حد المظاريف المجاني",
     "limitReachedMsg": "يمكنك إنشاء حتى ٣ مظاريف في الخطة المجانية. اشترك في بريميوم لإنشاء مظاريف غير محدودة!"
   },
   "envelopeDetail": {
@@ -114,7 +114,7 @@
   "locked": {
     "rentTracking": "تتبع الإيجار",
     "description": "أنشئ مظاريف غير محدودة مع بريميوم",
-    "upgradeCta": "👑 الترقية إلى بريميوم ←"
+    "upgradeCta": "الترقية إلى بريميوم ←"
   },
   "auth": {
     "title": "مظروفي",
@@ -150,16 +150,16 @@
     "trialNote": "يتم التجديد تلقائياً بعد انتهاء الفترة التجريبية.\nيمكنك الإلغاء في أي وقت.",
     "upgrade": "الترقية إلى بريميوم",
     "restore": "استعادة المشتريات",
-    "premiumActive": "🎉 بريميوم مفعّل",
+    "premiumActive": "بريميوم مفعّل",
     "premiumActiveMsg": "عضوية بريميوم الخاصة بك مفعّلة بالفعل!",
     "devMode": "وضع التطوير",
     "devModeMsg": "لم يتم تهيئة RevenueCat. استخدم EAS Build للشراء الفعلي.",
-    "devModeNote": "🔧 وضع التطوير — لم يتم تهيئة RevenueCat.\nيتم عرض سعر مؤقت.",
+    "devModeNote": "وضع التطوير — لم يتم تهيئة RevenueCat.\nيتم عرض سعر مؤقت.",
     "productError": "تعذّر تحميل معلومات المنتج",
-    "purchaseSuccess": "🎉 مرحباً بك!",
+    "purchaseSuccess": "مرحباً بك!",
     "purchaseSuccessMsg": "تم تفعيل عضوية بريميوم بنجاح!",
     "goBack": "العودة إلى مظاريفي",
-    "restoreSuccess": "✅ تمت الاستعادة",
+    "restoreSuccess": "تمت الاستعادة",
     "restoreSuccessMsg": "تم استعادة عضوية بريميوم!",
     "legal": "يتم إصدار فاتورة الاشتراك عبر حساب Apple ID / Google Play الخاص بك. يتم التجديد تلقائياً ما لم يتم الإلغاء قبل ٢٤ ساعة على الأقل من نهاية الفترة الحالية.",
     "features": {
@@ -178,7 +178,7 @@
     }
   },
   "settings": {
-    "title": "⚙️ الإعدادات",
+    "title": "الإعدادات",
     "notLoggedIn": "لم يتم تسجيل الدخول",
     "subscription": "الاشتراك",
     "upgradePremium": "الترقية إلى بريميوم",
@@ -198,8 +198,8 @@
     "appVersion": "مظروفي v1.0.0",
     "appTagline": "إدارة الميزانية بطريقة المظاريف",
     "free": "مجاني",
-    "premium": "👑 بريميوم",
-    "restoreSuccessTitle": "✅ تمت الاستعادة",
+    "premium": "بريميوم",
+    "restoreSuccessTitle": "تمت الاستعادة",
     "restoreSuccessMsg": "تم استعادة عضوية بريميوم بنجاح!",
     "languageChangeTitle": "تغيير اللغة",
     "languageChangeMsg": "تغيير اللغة يتطلب إعادة تشغيل التطبيق.",
@@ -240,7 +240,7 @@
     "totalExpense": "إجمالي النفقات:",
     "netStatus": "الحالة الصافية:",
     "notEnoughDataForTrend": "هناك حاجة إلى مزيد من البيانات للاتجاه.",
-    "exportPdfHeaderTitle": "📬 مظروفي — تقرير النفقات",
+    "exportPdfHeaderTitle": "مظروفي — تقرير النفقات",
     "exportTableDate": "التاريخ",
     "exportTableEnvelope": "المظروف",
     "exportTableNote": "ملاحظة / المتجر",

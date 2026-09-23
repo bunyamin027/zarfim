@@ -1,8 +1,6 @@
 /**
  * PrimaryButton — Zarfım ana aksiyon butonu
- *
- * stamp arka plan, paper yazı rengi.
- * Basıldığında hafif scale animasyonu.
+ * Modern minimalist stil, AppIcon desteği
  */
 import React, { useRef } from 'react';
 import {
@@ -10,10 +8,12 @@ import {
   Pressable,
   Text,
   StyleSheet,
+  View,
   type ViewStyle,
   type TextStyle,
 } from 'react-native';
 import { Colors, Fonts, FontSizes, Spacing, BorderRadius } from '@/lib/theme';
+import AppIcon from './AppIcon';
 
 interface PrimaryButtonProps {
   title: string;
@@ -21,7 +21,7 @@ interface PrimaryButtonProps {
   disabled?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
-  icon?: string;
+  icon?: string | React.ReactNode;
 }
 
 export default function PrimaryButton({
@@ -36,7 +36,7 @@ export default function PrimaryButton({
 
   const handlePressIn = () => {
     Animated.spring(scaleAnim, {
-      toValue: 0.95,
+      toValue: 0.96,
       useNativeDriver: true,
       speed: 50,
       bounciness: 4,
@@ -66,7 +66,13 @@ export default function PrimaryButton({
         disabled={disabled}
         style={[styles.button, disabled && styles.disabledButton, style]}
       >
-        {icon && <Text style={styles.icon}>{icon}</Text>}
+        {typeof icon === 'string' ? (
+          <View style={styles.iconContainer}>
+            <AppIcon name={icon} size={18} color={Colors.paper} />
+          </View>
+        ) : (
+          icon
+        )}
         <Text
           style={[styles.text, disabled && styles.disabledText, textStyle]}
         >
@@ -80,42 +86,40 @@ export default function PrimaryButton({
 const styles = StyleSheet.create({
   button: {
     backgroundColor: Colors.stamp,
-    paddingVertical: Spacing.md + 2,
+    paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.xl,
     borderRadius: BorderRadius.lg,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    // Hafif gölge
     shadowColor: Colors.stamp,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3,
   },
 
   text: {
     fontFamily: Fonts.bodySemiBold,
-    fontSize: FontSizes.lg,
+    fontSize: FontSizes.md,
     color: Colors.paper,
     letterSpacing: 0.3,
   },
 
-  icon: {
-    fontSize: 20,
+  iconContainer: {
     marginRight: Spacing.sm,
   },
 
   disabledContainer: {
-    opacity: 0.6,
+    opacity: 0.5,
   },
 
   disabledButton: {
-    backgroundColor: Colors.paperDark,
+    backgroundColor: Colors.inkLight,
     shadowOpacity: 0,
   },
 
   disabledText: {
-    color: Colors.inkLight,
+    color: '#8E8E93',
   },
 });

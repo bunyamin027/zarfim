@@ -2,16 +2,20 @@ import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, FlatList } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Colors, Fonts, FontSizes, Spacing } from '@/lib/theme';
+import { Colors, Fonts, FontSizes, Spacing, BorderRadius } from '@/lib/theme';
 import { useEnvelopesStore } from '@/store/envelopes';
 import { formatCurrency } from '@/lib/formatCurrency';
 import PrimaryButton from '@/components/PrimaryButton';
+import SwipeableItem from '@/components/SwipeableItem';
+import AppIcon from '@/components/AppIcon';
+import { queryClient } from '@/lib/queryClient';
 
 export default function ExpensesScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const transactions = useEnvelopesStore((s) => s.transactions);
   const envelopes = useEnvelopesStore((s) => s.envelopes);
+  const deleteTransaction = useEnvelopesStore((s) => s.deleteTransaction);
 
   // Get current month transactions
   const now = new Date();
@@ -20,22 +24,33 @@ export default function ExpensesScreen() {
     (tx) => new Date(tx.occurred_at).getTime() >= monthStart
   ).sort((a, b) => new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime());
 
+  const handleDeleteExpense = async (id: string) => {
+    await deleteTransaction(id);
+    await queryClient.invalidateQueries({ queryKey: ['transactions'] });
+    await queryClient.invalidateQueries({ queryKey: ['envelopes'] });
+  };
+
   const renderItem = ({ item }: { item: any }) => {
     const envelope = envelopes.find((e) => e.id === item.envelope_id);
     return (
-      <View style={styles.expenseCard}>
-        <View style={[styles.iconContainer, { backgroundColor: envelope?.color || Colors.ink }]}>
-          <Text style={styles.icon}>{envelope?.icon || '🛒'}</Text>
+      <SwipeableItem
+        onDelete={() => handleDeleteExpense(item.id)}
+        style={{ marginHorizontal: Spacing.lg }}
+      >
+        <View style={styles.expenseCard}>
+          <View style={[styles.iconContainer, { backgroundColor: envelope?.color || Colors.inkLight }]}>
+            <AppIcon name={envelope?.icon || 'cart-outline'} size={18} color="#FFFFFF" />
+          </View>
+          <View style={styles.infoContainer}>
+            <Text style={styles.envelopeName}>{envelope?.name || 'Genel'}</Text>
+            {item.note && <Text style={styles.note}>{item.note}</Text>}
+            <Text style={styles.date}>
+              {new Date(item.occurred_at).toLocaleDateString()}
+            </Text>
+          </View>
+          <Text style={styles.amount}>−{formatCurrency(item.amount)}</Text>
         </View>
-        <View style={styles.infoContainer}>
-          <Text style={styles.envelopeName}>{envelope?.name || 'Genel'}</Text>
-          {item.note && <Text style={styles.note}>{item.note}</Text>}
-          <Text style={styles.date}>
-            {new Date(item.occurred_at).toLocaleDateString()}
-          </Text>
-        </View>
-        <Text style={styles.amount}>-{formatCurrency(item.amount)}</Text>
-      </View>
+      </SwipeableItem>
     );
   };
 
@@ -47,7 +62,7 @@ export default function ExpensesScreen() {
 
       {currentMonthTransactions.length === 0 ? (
         <View style={styles.emptyStateContainer}>
-          <Text style={styles.emptyStateIcon}>💸</Text>
+          <AppIcon name="arrow-up-circle-outline" size={40} color={Colors.stamp} />
           <Text style={styles.emptyStateTitle}>{t('expenses.noExpenses')}</Text>
         </View>
       ) : (
@@ -63,7 +78,7 @@ export default function ExpensesScreen() {
       <View style={styles.footer}>
         <PrimaryButton
           title={t('dashboard.addExpense')}
-          icon="✏️"
+          icon="pencil-outline"
           onPress={() => router.push('/add-expense')}
           style={styles.addButton}
         />
@@ -91,7 +106,6 @@ const styles = StyleSheet.create({
     color: Colors.paper,
   },
   listContent: {
-    paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.xxxl,
   },
   expenseCard: {
@@ -99,43 +113,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: Colors.inkLight,
     padding: Spacing.md,
-    borderRadius: 12,
-    marginBottom: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.06)',
   },
   iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.md,
-  },
-  icon: {
-    fontSize: 24,
   },
   infoContainer: {
     flex: 1,
   },
   envelopeName: {
-    fontFamily: Fonts.bodySemiBold,
+    fontFamily: Fonts.bodyMedium,
     fontSize: FontSizes.md,
     color: Colors.paper,
   },
   note: {
-    fontFamily: Fonts.body,
+    fontFamily: Fonts.bodyLight,
     fontSize: FontSizes.xs,
-    color: Colors.paperDark,
+    color: '#8E8E93',
     marginTop: 2,
   },
   date: {
-    fontFamily: Fonts.body,
+    fontFamily: Fonts.bodyLight,
     fontSize: 10,
-    color: Colors.paperDark,
-    marginTop: 4,
+    color: '#8E8E93',
+    marginTop: 3,
   },
   amount: {
-    fontFamily: Fonts.displayMedium,
-    fontSize: FontSizes.lg,
+    fontFamily: Fonts.bodySemiBold,
+    fontSize: FontSizes.md,
     color: Colors.stamp,
   },
   emptyStateContainer: {
@@ -143,21 +155,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: Spacing.xl,
-  },
-  emptyStateIcon: {
-    fontSize: 48,
-    marginBottom: Spacing.md,
+    gap: Spacing.sm,
   },
   emptyStateTitle: {
-    fontFamily: Fonts.displayMedium,
-    fontSize: FontSizes.lg,
-    color: Colors.paper,
+    fontFamily: Fonts.bodyLight,
+    fontSize: FontSizes.md,
+    color: '#8E8E93',
     textAlign: 'center',
   },
   footer: {
     padding: Spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: Colors.inkLight,
+    borderTopColor: 'rgba(255, 255, 255, 0.06)',
   },
   addButton: {
     width: '100%',

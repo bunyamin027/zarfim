@@ -22,6 +22,7 @@ import PostmarkRing from '@/components/PostmarkRing';
 import PrimaryButton from '@/components/PrimaryButton';
 import LockedEnvelopeCard from '@/components/LockedEnvelopeCard';
 import SkeletonEnvelope from '@/components/SkeletonEnvelope';
+import AppIcon from '@/components/AppIcon';
 import { useAuthStore } from '@/store/auth';
 import { useSubscriptionStore } from '@/store/subscription';
 
@@ -48,9 +49,9 @@ export default function DashboardScreen() {
         setLogoTapCount(0);
         const newStatus = toggleSecretPremium();
         Alert.alert(
-          '👑 Gizli Özellik!',
+          'Gizli Özellik',
           newStatus
-            ? 'Tebrikler! Zarfım Premium geliştirici modu aktifleştirildi! 🎉'
+            ? 'Zarfım Premium geliştirici modu aktifleştirildi.'
             : 'Zarfım Premium varsayılan moda döndürüldü.'
         );
       }
@@ -122,7 +123,7 @@ export default function DashboardScreen() {
                 <Text style={styles.summaryValue}>
                   {formatCurrency(totalBudget)}
                 </Text>
-                <Text style={styles.summaryLabel}>{t('dashboard.totalBudget')} ✏️</Text>
+                <Text style={styles.summaryLabel}>{t('dashboard.totalBudget')}</Text>
               </Pressable>
               <View style={styles.summaryDivider} />
               <View style={styles.summaryItem}>
@@ -163,7 +164,7 @@ export default function DashboardScreen() {
             
             {!isLoading && !isError && displayEnvelopes.length === 0 && (
               <View style={styles.emptyStateContainer}>
-                <Text style={styles.emptyStateIcon}>✨</Text>
+                <AppIcon name="sparkles-outline" size={32} color={Colors.gold} />
                 <Text style={styles.emptyStateTitle}>{t('dashboard.emptyStateTitle')}</Text>
                 <Text style={styles.emptyStateDesc}>{t('dashboard.emptyStateDesc')}</Text>
               </View>
@@ -176,7 +177,7 @@ export default function DashboardScreen() {
 
             <PrimaryButton
               title={t('dashboard.addExpense')}
-              icon="✏️"
+              icon="pencil-outline"
               onPress={() => router.push('/add-expense')}
               style={styles.addExpenseButton}
             />

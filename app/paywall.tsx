@@ -1,5 +1,6 @@
 /**
  * Paywall Ekranı — Zarfım Premium (i18n destekli)
+ * Modern minimalist tasarım, sıfır emoji, vektör ikonlar
  */
 import React, { useEffect, useState } from 'react';
 import {
@@ -15,19 +16,21 @@ import {
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
 import { Colors, Fonts, FontSizes, Spacing, BorderRadius } from '@/lib/theme';
 import { isRevenueCatConfigured, getMockPriceString } from '@/lib/revenuecat';
 import { useSubscriptionStore } from '@/store/subscription';
 import PrimaryButton from '@/components/PrimaryButton';
+import AppIcon from '@/components/AppIcon';
 
 const FEATURE_KEYS = [
-  { icon: '📬', titleKey: 'paywall.features.unlimitedEnvelopes', descKey: 'paywall.features.unlimitedEnvelopesDesc' },
-  { icon: '👨‍👩‍👧‍👦', titleKey: 'paywall.features.familySharing', descKey: 'paywall.features.familySharingDesc' },
-  { icon: '📊', titleKey: 'paywall.features.reports', descKey: 'paywall.features.reportsDesc' },
-  { icon: '📥', titleKey: 'paywall.features.export', descKey: 'paywall.features.exportDesc' },
-  { icon: '🔔', titleKey: 'paywall.features.notifications', descKey: 'paywall.features.notificationsDesc' },
-  { icon: '🎨', titleKey: 'paywall.features.themes', descKey: 'paywall.features.themesDesc' },
+  { icon: 'mail-outline', titleKey: 'paywall.features.unlimitedEnvelopes', descKey: 'paywall.features.unlimitedEnvelopesDesc' },
+  { icon: 'people-outline', titleKey: 'paywall.features.familySharing', descKey: 'paywall.features.familySharingDesc' },
+  { icon: 'pie-chart-outline', titleKey: 'paywall.features.reports', descKey: 'paywall.features.reportsDesc' },
+  { icon: 'download-outline', titleKey: 'paywall.features.export', descKey: 'paywall.features.exportDesc' },
+  { icon: 'notifications-outline', titleKey: 'paywall.features.notifications', descKey: 'paywall.features.notificationsDesc' },
+  { icon: 'color-palette-outline', titleKey: 'paywall.features.themes', descKey: 'paywall.features.themesDesc' },
 ];
 
 const MAX_OFFERING_RETRIES = 3;
@@ -37,7 +40,6 @@ export default function PaywallScreen() {
   const router = useRouter();
   const {
     currentOffering,
-    mockOffering,
     isPremium,
     isLoading,
     error,
@@ -67,7 +69,7 @@ export default function PaywallScreen() {
       const timer = setTimeout(() => {
         setOfferingsRetryCount((c) => c + 1);
         fetchOfferings();
-      }, 2000 * (offeringsRetryCount + 1)); // Progressive delay: 2s, 4s, 6s
+      }, 2000 * (offeringsRetryCount + 1));
       return () => clearTimeout(timer);
     }
   }, [isLoading, currentOffering, offeringsRetryCount]);
@@ -97,46 +99,55 @@ export default function PaywallScreen() {
     }
 
     if (!monthlyPackage) {
-      // Instead of just showing an error, try to fetch offerings first
       handleRetryOfferings();
       return;
     }
 
-    setPurchasing(true);
-    const success = await purchase(monthlyPackage);
-    setPurchasing(false);
-
-    if (success) {
-      Alert.alert(t('paywall.purchaseSuccess'), t('paywall.purchaseSuccessMsg'), [
-        { text: t('paywall.goBack'), onPress: () => router.back() },
-      ]);
+    try {
+      setPurchasing(true);
+      clearError();
+      const success = await purchase(monthlyPackage);
+      if (success) {
+        Alert.alert(
+          'Hoş Geldiniz',
+          t('paywall.purchaseSuccessMsg'),
+          [{ text: t('paywall.goBack'), onPress: () => router.back() }],
+        );
+      }
+    } catch {
+      // Error handled by store
+    } finally {
+      setPurchasing(false);
     }
   };
 
   const handleRestore = async () => {
+    clearError();
     const success = await restore();
     if (success) {
-      Alert.alert(t('paywall.restoreSuccess'), t('paywall.restoreSuccessMsg'), [
-        { text: t('common.ok'), onPress: () => router.back() },
-      ]);
-    } else if (error) {
-      Alert.alert(t('common.info'), error);
-      clearError();
+      Alert.alert(
+        'Geri Yüklendi',
+        t('paywall.restoreSuccessMsg'),
+        [{ text: t('paywall.goBack'), onPress: () => router.back() }],
+      );
     }
   };
 
-  // Determine if offerings failed to load
-  const offeringsFailed = isRevenueCatConfigured && !currentOffering && !isLoading;
+  const offeringsFailed = !isLoading && !currentOffering && isRevenueCatConfigured;
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Pressable style={styles.closeButton} onPress={() => router.back()}>
-          <Text style={styles.closeText}>{t('common.close')}</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <View style={styles.sheetHandle} />
+
+        <Pressable onPress={() => router.back()} style={styles.closeButton}>
+          <Ionicons name="close" size={20} color={Colors.paper} />
         </Pressable>
 
         <View style={styles.header}>
-          <Text style={styles.crown}>👑</Text>
+          <View style={styles.iconBadge}>
+            <AppIcon name="sparkles-outline" size={32} color={Colors.gold} />
+          </View>
           <Text style={styles.title}>{t('paywall.title')}</Text>
           <Text style={styles.subtitle}>{t('paywall.subtitle')}</Text>
         </View>
@@ -164,7 +175,9 @@ export default function PaywallScreen() {
               style={styles.featureRow}
               entering={FadeInUp.delay(300 + index * 100).springify()}
             >
-              <Text style={styles.featureIcon}>{feature.icon}</Text>
+              <View style={styles.featureIconContainer}>
+                <AppIcon name={feature.icon} size={18} color={Colors.gold} />
+              </View>
               <View style={styles.featureText}>
                 <Text style={styles.featureTitle}>{t(feature.titleKey)}</Text>
                 <Text style={styles.featureDesc}>{t(feature.descKey)}</Text>
@@ -180,7 +193,8 @@ export default function PaywallScreen() {
             <View style={styles.retryContainer}>
               <Text style={styles.retryText}>{t('paywall.productError')}</Text>
               <PrimaryButton
-                title="↻ Tekrar Dene"
+                title="Tekrar Dene"
+                icon="refresh-outline"
                 onPress={handleRetryOfferings}
                 style={styles.retryButton}
               />
@@ -188,7 +202,7 @@ export default function PaywallScreen() {
           ) : (
             <PrimaryButton
               title={t('paywall.upgrade')}
-              icon="⭐"
+              icon="sparkles-outline"
               onPress={handlePurchase}
               style={styles.ctaButton}
             />
@@ -204,7 +218,7 @@ export default function PaywallScreen() {
 
           {!isRevenueCatConfigured && (
             <View style={styles.devNote}>
-              <Text style={styles.devNoteText}>{t('paywall.devModeNote')}</Text>
+              <Text style={styles.devNoteText}>Geliştirme modu — Demo fiyat gösteriliyor.</Text>
             </View>
           )}
         </View>
@@ -231,139 +245,155 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.ink,
   },
+  sheetHandle: {
+    width: 36,
+    height: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.xs,
+  },
   scrollContent: {
     paddingHorizontal: Spacing.xl,
     paddingBottom: Spacing.xxxl,
   },
   closeButton: {
     alignSelf: 'flex-end',
-    padding: Spacing.md,
-    marginTop: Spacing.sm,
-  },
-  closeText: {
-    fontSize: 22,
-    color: Colors.paperDark,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: Spacing.xs,
   },
   header: {
     alignItems: 'center',
     marginBottom: Spacing.xl,
   },
-  crown: {
-    fontSize: 56,
-    marginBottom: Spacing.sm,
+  iconBadge: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(201, 151, 58, 0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.md,
   },
   title: {
     fontFamily: Fonts.display,
-    fontSize: FontSizes.xxxl,
+    fontSize: FontSizes.xxl,
     color: Colors.gold,
     marginBottom: Spacing.xs,
   },
   subtitle: {
-    fontFamily: Fonts.body,
-    fontSize: FontSizes.md,
-    color: Colors.paperDark,
+    fontFamily: Fonts.bodyLight,
+    fontSize: FontSizes.sm,
+    color: '#8E8E93',
   },
   priceCard: {
     backgroundColor: Colors.inkLight,
     borderRadius: BorderRadius.lg,
-    borderWidth: 2,
-    borderColor: Colors.gold,
+    borderWidth: 1,
+    borderColor: 'rgba(201, 151, 58, 0.4)',
     padding: Spacing.xl,
     alignItems: 'center',
     marginBottom: Spacing.xl,
   },
   trialBadge: {
-    backgroundColor: Colors.gold,
+    backgroundColor: 'rgba(201, 151, 58, 0.2)',
     borderRadius: BorderRadius.full,
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.lg,
     marginBottom: Spacing.md,
   },
   trialText: {
-    fontFamily: Fonts.bodySemiBold,
-    fontSize: FontSizes.sm,
-    color: Colors.ink,
+    fontFamily: Fonts.bodyMedium,
+    fontSize: FontSizes.xs,
+    color: Colors.gold,
+    letterSpacing: 0.3,
   },
   price: {
-    fontFamily: Fonts.display,
-    fontSize: 42,
+    fontFamily: Fonts.bodySemiBold,
+    fontSize: 36,
     color: Colors.paper,
   },
   priceDetail: {
-    fontFamily: Fonts.body,
-    fontSize: FontSizes.lg,
-    color: Colors.paperDark,
-    marginTop: -4,
+    fontFamily: Fonts.bodyLight,
+    fontSize: FontSizes.sm,
+    color: '#8E8E93',
+    marginBottom: Spacing.sm,
   },
   priceNote: {
-    fontFamily: Fonts.body,
+    fontFamily: Fonts.bodyLight,
     fontSize: FontSizes.xs,
-    color: Colors.paperDark,
+    color: '#8E8E93',
     textAlign: 'center',
-    marginTop: Spacing.md,
     lineHeight: 18,
   },
   featuresContainer: {
     marginBottom: Spacing.xl,
+    gap: Spacing.md,
   },
   featureRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.inkLight,
+    backgroundColor: Colors.inkLight,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.05)',
   },
-  featureIcon: {
-    fontSize: 24,
-    width: 40,
-    textAlign: 'center',
+  featureIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: 'rgba(201, 151, 58, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginEnd: Spacing.md,
   },
   featureText: {
     flex: 1,
-    marginStart: Spacing.md,
   },
   featureTitle: {
     fontFamily: Fonts.bodySemiBold,
-    fontSize: FontSizes.md,
+    fontSize: FontSizes.sm,
     color: Colors.paper,
+    marginBottom: 2,
   },
   featureDesc: {
-    fontFamily: Fonts.body,
-    fontSize: FontSizes.sm,
-    color: Colors.paperDark,
-    marginTop: 2,
+    fontFamily: Fonts.bodyLight,
+    fontSize: FontSizes.xs,
+    color: '#8E8E93',
   },
   ctaContainer: {
     alignItems: 'center',
     marginBottom: Spacing.xl,
   },
   ctaButton: {
-    backgroundColor: Colors.gold,
     width: '100%',
-    shadowColor: Colors.gold,
+    backgroundColor: Colors.stamp,
   },
   retryContainer: {
-    alignItems: 'center',
     width: '100%',
-    paddingVertical: Spacing.md,
+    alignItems: 'center',
+    gap: Spacing.sm,
   },
   retryText: {
-    fontFamily: Fonts.body,
+    fontFamily: Fonts.bodyLight,
     fontSize: FontSizes.sm,
     color: Colors.paperDark,
-    textAlign: 'center',
-    marginBottom: Spacing.md,
   },
   retryButton: {
-    backgroundColor: Colors.inkLight,
-    borderWidth: 1,
-    borderColor: Colors.gold,
+    width: '100%',
   },
   errorText: {
-    fontFamily: Fonts.body,
+    fontFamily: Fonts.bodyLight,
     fontSize: FontSizes.sm,
-    color: Colors.stamp,
-    marginTop: Spacing.md,
+    color: Colors.danger,
+    marginTop: Spacing.sm,
     textAlign: 'center',
   },
   restoreButton: {
@@ -371,55 +401,48 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
   },
   restoreText: {
-    fontFamily: Fonts.bodyMedium,
+    fontFamily: Fonts.bodyLight,
     fontSize: FontSizes.sm,
-    color: Colors.paperDark,
-    textDecorationLine: 'underline',
+    color: '#8E8E93',
   },
   devNote: {
-    marginTop: Spacing.lg,
-    backgroundColor: Colors.inkLight,
+    marginTop: Spacing.md,
+    padding: Spacing.sm,
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
     borderRadius: BorderRadius.sm,
-    padding: Spacing.md,
   },
   devNoteText: {
-    fontFamily: Fonts.body,
+    fontFamily: Fonts.bodyLight,
     fontSize: FontSizes.xs,
-    color: Colors.gold,
+    color: '#8E8E93',
     textAlign: 'center',
-    lineHeight: 18,
   },
   legalContainer: {
-    marginTop: Spacing.xl,
     alignItems: 'center',
-    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.06)',
   },
   legal: {
-    fontFamily: Fonts.body,
-    fontSize: FontSizes.xs,
-    color: Colors.paperDark,
+    fontFamily: Fonts.bodyLight,
+    fontSize: 11,
+    color: '#64748B',
     textAlign: 'center',
     lineHeight: 16,
-    opacity: 0.5,
     marginBottom: Spacing.sm,
   },
   legalLinks: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
   },
   legalLink: {
-    fontFamily: Fonts.bodyMedium,
-    fontSize: FontSizes.xs,
-    color: Colors.paperDark,
+    fontFamily: Fonts.bodyLight,
+    fontSize: 11,
+    color: '#8E8E93',
     textDecorationLine: 'underline',
-    opacity: 0.8,
   },
   legalSeparator: {
-    fontFamily: Fonts.body,
-    fontSize: FontSizes.xs,
-    color: Colors.paperDark,
-    opacity: 0.5,
-    marginHorizontal: Spacing.xs,
+    color: '#64748B',
+    fontSize: 11,
   },
 });

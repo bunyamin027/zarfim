@@ -1,5 +1,6 @@
 /**
  * EnvelopeCard — Zarfım'ın imza bileşeni (i18n destekli)
+ * Modern minimalist tasarım, sıfır emoji, vektör ikonlar
  */
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
@@ -14,6 +15,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Colors, Fonts, FontSizes, Spacing, BorderRadius, Shadows } from '@/lib/theme';
 import { formatCurrency } from '@/lib/formatCurrency';
+import AppIcon from './AppIcon';
 
 interface EnvelopeCardEnvelope {
   id: string;
@@ -34,7 +36,7 @@ export default function EnvelopeCard({ envelope }: EnvelopeCardProps) {
   const router = useRouter();
   const { id, name, icon, spent, color } = envelope;
   const monthlyLimit = envelope.monthly_limit ?? envelope.monthlyLimit ?? 0;
-  const progress = Math.min(spent / monthlyLimit, 1);
+  const progress = monthlyLimit > 0 ? Math.min(spent / monthlyLimit, 1) : 0;
   const remaining = monthlyLimit - spent;
   const isOver = spent > monthlyLimit;
 
@@ -50,7 +52,7 @@ export default function EnvelopeCard({ envelope }: EnvelopeCardProps) {
 
   useEffect(() => {
     progressWidth.value = withTiming(progress * 100, {
-      duration: 1000,
+      duration: 800,
       easing: Easing.out(Easing.cubic),
     });
   }, [progress]);
@@ -70,48 +72,46 @@ export default function EnvelopeCard({ envelope }: EnvelopeCardProps) {
 
   return (
     <Pressable
-      onPressIn={() => (scale.value = withSpring(0.97))}
+      onPressIn={() => (scale.value = withSpring(0.98))}
       onPressOut={() => (scale.value = withSpring(1))}
       onPress={() => router.push(`/envelope/${id}`)}
     >
       <Animated.View style={[styles.container, animatedContainerStyle]}>
-      <View style={styles.flapContainer}>
-        <View style={[styles.flapTriangle, styles.flapTriangleLeft]} />
-      </View>
-
-      <View style={styles.body}>
-        <View style={styles.header}>
-          <Text style={styles.icon}>{icon}</Text>
-          <View style={styles.headerText}>
-            <Text style={styles.name}>{name}</Text>
-            <Text style={styles.amounts}>
-              <Text style={[styles.spent, { color: progressColor }]}>
-                {formatCurrency(spent)}
+        <View style={styles.body}>
+          <View style={styles.header}>
+            <View style={[styles.iconContainer, { backgroundColor: color || Colors.inkLight }]}>
+              <AppIcon name={icon} size={20} color="#FFFFFF" />
+            </View>
+            <View style={styles.headerText}>
+              <Text style={styles.name}>{name}</Text>
+              <Text style={styles.amounts}>
+                <Text style={[styles.spent, { color: progressColor }]}>
+                  {formatCurrency(spent)}
+                </Text>
+                <Text style={styles.separator}> / </Text>
+                <Text style={styles.limit}>{formatCurrency(monthlyLimit)}</Text>
               </Text>
-              <Text style={styles.separator}> / </Text>
-              <Text style={styles.limit}>{formatCurrency(monthlyLimit)}</Text>
-            </Text>
+            </View>
+            <View style={styles.remainingBadge}>
+              <Text
+                style={[
+                  styles.remainingText,
+                  { color: isOver ? Colors.stamp : Colors.sage },
+                ]}
+              >
+                {isOver ? '−' : ''}{formatCurrency(Math.abs(remaining))}
+              </Text>
+              <Text style={styles.remainingLabel}>
+                {isOver ? t('envelope.over') : t('envelope.remaining')}
+              </Text>
+            </View>
           </View>
-          <View style={styles.remainingBadge}>
-            <Text
-              style={[
-                styles.remainingText,
-                { color: isOver ? Colors.stamp : Colors.sage },
-              ]}
-            >
-              {isOver ? '−' : ''}{formatCurrency(Math.abs(remaining))}
-            </Text>
-            <Text style={styles.remainingLabel}>
-              {isOver ? t('envelope.over') : t('envelope.remaining')}
-            </Text>
-          </View>
-        </View>
 
-        <View style={styles.progressTrack}>
-          <Animated.View style={[styles.progressFill, animatedProgressStyle]} />
+          <View style={styles.progressTrack}>
+            <Animated.View style={[styles.progressFill, animatedProgressStyle]} />
+          </View>
         </View>
-      </View>
-    </Animated.View>
+      </Animated.View>
     </Pressable>
   );
 }
@@ -119,36 +119,13 @@ export default function EnvelopeCard({ envelope }: EnvelopeCardProps) {
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.lg,
-  },
-  flapContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    height: 18,
-    overflow: 'hidden',
-  },
-  flapTriangle: {
-    width: 0,
-    height: 0,
-    borderStyle: 'solid',
-  },
-  flapTriangleLeft: {
-    borderLeftWidth: 100,
-    borderRightWidth: 100,
-    borderTopWidth: 18,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderTopColor: Colors.paperDark,
-    marginRight: -1,
+    marginBottom: Spacing.md,
   },
   body: {
-    backgroundColor: Colors.paper,
-    borderWidth: 1.5,
-    borderColor: Colors.paperDark,
-    borderStyle: 'dashed',
-    borderRadius: BorderRadius.md,
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
+    backgroundColor: Colors.inkLight,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     ...Shadows.card,
   },
@@ -157,8 +134,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.md,
   },
-  icon: {
-    fontSize: 28,
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginEnd: Spacing.md,
   },
   headerText: {
@@ -166,44 +147,44 @@ const styles = StyleSheet.create({
   },
   name: {
     fontFamily: Fonts.bodySemiBold,
-    fontSize: FontSizes.lg,
-    color: Colors.ink,
-    marginBottom: 2,
+    fontSize: FontSizes.md,
+    color: Colors.paper,
+    marginBottom: 3,
     textAlign: 'left',
   },
   amounts: {
     fontSize: FontSizes.sm,
   },
   spent: {
-    fontFamily: Fonts.bodyBold,
-    fontSize: FontSizes.md,
+    fontFamily: Fonts.bodyMedium,
+    fontSize: FontSizes.sm,
   },
   separator: {
-    fontFamily: Fonts.body,
-    color: Colors.inkLight,
-    fontSize: FontSizes.sm,
+    fontFamily: Fonts.bodyLight,
+    color: '#8E8E93',
+    fontSize: FontSizes.xs,
   },
   limit: {
-    fontFamily: Fonts.body,
-    color: Colors.inkLight,
-    fontSize: FontSizes.sm,
+    fontFamily: Fonts.bodyLight,
+    color: '#8E8E93',
+    fontSize: FontSizes.xs,
   },
   remainingBadge: {
     alignItems: 'flex-end',
   },
   remainingText: {
-    fontFamily: Fonts.bodyBold,
-    fontSize: FontSizes.md,
+    fontFamily: Fonts.bodySemiBold,
+    fontSize: FontSizes.sm,
   },
   remainingLabel: {
-    fontFamily: Fonts.body,
+    fontFamily: Fonts.bodyLight,
     fontSize: FontSizes.xs,
-    color: Colors.inkLight,
+    color: '#8E8E93',
     marginTop: 1,
   },
   progressTrack: {
-    height: 6,
-    backgroundColor: Colors.paperDark,
+    height: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: BorderRadius.full,
     overflow: 'hidden',
   },

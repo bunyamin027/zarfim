@@ -1,6 +1,6 @@
 /**
  * Add Expense Modal — Zarfım
- * Harcama ekleme modal ekranı.
+ * Modern minimalist tasarım, sıfır emoji, vektör ikonlar
  */
 import React, { useState } from 'react';
 import {
@@ -17,12 +17,14 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors, Fonts, FontSizes, Spacing, BorderRadius } from '@/lib/theme';
 import PrimaryButton from '@/components/PrimaryButton';
+import AppIcon from '@/components/AppIcon';
 import { useEnvelopesStore } from '@/store/envelopes';
 import { useEnvelopes, useMonthlyStats } from '@/lib/hooks/useEnvelopes';
 import { queryClient } from '@/lib/queryClient';
-import { formatCurrency, getCurrencySymbol } from '@/lib/formatCurrency';
+import { getCurrencySymbol } from '@/lib/formatCurrency';
 
 export default function AddExpenseModal() {
   const { t } = useTranslation();
@@ -58,7 +60,6 @@ export default function AddExpenseModal() {
 
     // Check 80% Warning against totalIncome
     if (stats.totalIncome > 0 && projectedSpent >= stats.totalIncome * 0.8 && stats.totalSpent < stats.totalIncome * 0.8) {
-      // Alert once when passing the 80% threshold
       Alert.alert(t('common.info', 'Bilgi'), t('addExpenseModal.eightyPercentWarning'));
     }
 
@@ -89,12 +90,14 @@ export default function AddExpenseModal() {
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
+        <View style={styles.sheetHandle} />
+
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.closeButton}>
-            <Text style={styles.closeText}>✕</Text>
+            <Ionicons name="close" size={20} color={Colors.paper} />
           </Pressable>
-          <Text style={styles.title}>{t('addExpenseModal.title')}</Text>
-          <View style={{ width: 40 }} />
+          <Text style={styles.title}>Harcama Ekle</Text>
+          <View style={{ width: 36 }} />
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
@@ -113,10 +116,12 @@ export default function AddExpenseModal() {
                   onPress={() => setSelectedId(env.id)}
                   style={[
                     styles.chip,
-                    isSelected && { backgroundColor: env.color || Colors.stamp, borderColor: Colors.paper },
+                    isSelected && { backgroundColor: env.color || Colors.stamp, borderColor: 'transparent' },
                   ]}
                 >
-                  <Text style={styles.chipIcon}>{env.icon}</Text>
+                  <View style={styles.chipIconContainer}>
+                    <AppIcon name={env.icon} size={15} color={isSelected ? '#FFFFFF' : '#8E8E93'} />
+                  </View>
                   <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
                     {env.name}
                   </Text>
@@ -131,8 +136,8 @@ export default function AddExpenseModal() {
             <Text style={styles.currencySymbol}>{getCurrencySymbol()}</Text>
             <TextInput
               style={styles.amountInput}
-              placeholder="0"
-              placeholderTextColor={Colors.paperDark}
+              placeholder="0.00"
+              placeholderTextColor="#64748B"
               keyboardType="decimal-pad"
               value={amount}
               onChangeText={setAmount}
@@ -140,12 +145,12 @@ export default function AddExpenseModal() {
             />
           </View>
 
-          {/* Not / Açıklama */}
+          {/* Not Girişi */}
           <Text style={styles.label}>{t('addExpenseModal.note')}</Text>
           <TextInput
             style={styles.noteInput}
             placeholder={t('addExpenseModal.notePlaceholder')}
-            placeholderTextColor={Colors.paperDark}
+            placeholderTextColor="#64748B"
             value={note}
             onChangeText={setNote}
           />
@@ -153,7 +158,7 @@ export default function AddExpenseModal() {
           <View style={styles.submitContainer}>
             <PrimaryButton
               title={t('addExpenseModal.submit')}
-              icon="💸"
+              icon="add-outline"
               onPress={handleSubmit}
               disabled={isSubmitting || !selectedId || !amount}
             />
@@ -169,83 +174,92 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.ink,
   },
+  sheetHandle: {
+    width: 36,
+    height: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.xs,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
+    paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.inkLight,
+    borderBottomColor: 'rgba(255, 255, 255, 0.06)',
   },
   closeButton: {
-    padding: Spacing.sm,
-  },
-  closeText: {
-    fontSize: 22,
-    color: Colors.paperDark,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     fontFamily: Fonts.display,
-    fontSize: FontSizes.xl,
+    fontSize: FontSizes.lg,
     color: Colors.paper,
   },
   scrollContent: {
     padding: Spacing.xl,
   },
   label: {
-    fontFamily: Fonts.bodySemiBold,
-    fontSize: FontSizes.md,
-    color: Colors.paper,
-    marginBottom: Spacing.md,
+    fontFamily: Fonts.bodyMedium,
+    fontSize: FontSizes.sm,
+    color: '#CBD5E1',
+    marginBottom: Spacing.sm,
     marginTop: Spacing.lg,
   },
   chipsContainer: {
-    gap: Spacing.md,
-    paddingBottom: Spacing.sm,
+    gap: Spacing.sm,
+    paddingBottom: Spacing.xs,
   },
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.inkLight,
-    borderWidth: 1.5,
-    borderColor: Colors.paperDark + '40',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: BorderRadius.full,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm + 2,
+    paddingHorizontal: Spacing.md + 2,
   },
-  chipIcon: {
-    fontSize: 20,
-    marginEnd: Spacing.sm,
+  chipIconContainer: {
+    marginEnd: Spacing.xs + 2,
   },
   chipText: {
-    fontFamily: Fonts.bodySemiBold,
-    fontSize: FontSizes.md,
-    color: Colors.paperDark,
+    fontFamily: Fonts.bodyMedium,
+    fontSize: FontSizes.sm,
+    color: '#94A3B8',
   },
   chipTextSelected: {
-    color: Colors.white,
+    color: '#FFFFFF',
   },
   amountInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.inkLight,
-    borderRadius: BorderRadius.lg,
-    paddingHorizontal: Spacing.xl,
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    borderWidth: 1.5,
-    borderColor: Colors.gold,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   currencySymbol: {
-    fontFamily: Fonts.display,
-    fontSize: 36,
+    fontFamily: Fonts.bodyLight,
+    fontSize: 28,
     color: Colors.gold,
-    marginEnd: Spacing.md,
+    marginEnd: Spacing.sm,
   },
   amountInput: {
     flex: 1,
-    fontFamily: Fonts.display,
-    fontSize: 36,
+    fontFamily: Fonts.bodySemiBold,
+    fontSize: 28,
     color: Colors.paper,
   },
   noteInput: {
@@ -257,7 +271,7 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.md,
     color: Colors.paper,
     borderWidth: 1,
-    borderColor: Colors.paperDark + '40',
+    borderColor: 'rgba(255, 255, 255, 0.08)',
   },
   submitContainer: {
     marginTop: Spacing.xxl,
