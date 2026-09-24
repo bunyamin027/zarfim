@@ -5,29 +5,32 @@
  * Türkçe: tr-TR / TRY (₺), Arapça: ar-SA / SAR (ر.س)
  */
 import { getCurrentLanguage } from '@/lib/i18n';
+import { useCurrencyStore, SUPPORTED_CURRENCIES } from '@/store/currency';
 
 const LOCALE_MAP: Record<string, string> = {
   tr: 'tr-TR',
+  en: 'en-US',
   ar: 'ar-SA',
 };
 
-const CURRENCY_MAP: Record<string, string> = {
-  tr: 'TRY',
-  ar: 'SAR',
-};
-
-/**
- * Aktif dile uygun para birimi simgesini döndürür (₺ veya ر.س)
- */
-export function getCurrencySymbol(locale?: string): string {
-  const lang = (locale || getCurrentLanguage())?.startsWith('ar') ? 'ar' : 'tr';
-  return lang === 'ar' ? 'ر.س' : '₺';
+function resolveLang(raw?: string): 'tr' | 'en' | 'ar' {
+  if (raw?.startsWith('ar')) return 'ar';
+  if (raw?.startsWith('en')) return 'en';
+  return 'tr';
 }
 
 /**
- * Tutarı locale'e uygun para birimi formatında döndürür.
+ * Aktif para birimi simgesini döndürür (₺, $, €, £, ر.س veya د.إ)
+ */
+export function getCurrencySymbol(customCurrency?: string): string {
+  const code = customCurrency || useCurrencyStore.getState().currency;
+  return SUPPORTED_CURRENCIES[code]?.symbol || '$';
+}
+
+/**
+ * Tutarı seçili para birimine göre formatlar.
  * @param amount Sayısal tutar
- * @param currency Opsiyonel para birimi kodu (varsayılan: dile göre)
+ * @param currency Opsiyonel para birimi kodu (varsayılan: seçili para birimi)
  * @param locale Opsiyonel locale kodu (varsayılan: aktif dil)
  */
 export function formatCurrency(
@@ -35,20 +38,19 @@ export function formatCurrency(
   currency?: string,
   locale?: string,
 ): string {
-  const rawLang = locale || getCurrentLanguage();
-  const lang = rawLang?.startsWith('ar') ? 'ar' : 'tr';
-  const resolvedLocale = locale || LOCALE_MAP[lang] || 'tr-TR';
-  const resolvedCurrency = currency || CURRENCY_MAP[lang] || 'TRY';
+  const selectedCurrency = currency || useCurrencyStore.getState().currency || 'TRY';
+  const lang = resolveLang(locale || getCurrentLanguage());
+  const resolvedLocale = locale || (lang === 'ar' ? 'ar-SA' : (lang === 'tr' ? 'tr-TR' : 'en-US'));
 
   try {
     return new Intl.NumberFormat(resolvedLocale, {
       style: 'currency',
-      currency: resolvedCurrency,
+      currency: selectedCurrency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
   } catch {
-    const symbol = getCurrencySymbol(lang);
+    const symbol = SUPPORTED_CURRENCIES[selectedCurrency]?.symbol || getCurrencySymbol();
     return `${amount.toLocaleString()} ${symbol}`;
   }
 }
@@ -57,8 +59,7 @@ export function formatCurrency(
  * Yüzdeyi locale'e uygun formatta döndürür.
  */
 export function formatPercent(value: number, locale?: string): string {
-  const rawLang = locale || getCurrentLanguage();
-  const lang = rawLang?.startsWith('ar') ? 'ar' : 'tr';
+  const lang = resolveLang(locale || getCurrentLanguage());
   const resolvedLocale = locale || LOCALE_MAP[lang] || 'tr-TR';
 
   try {

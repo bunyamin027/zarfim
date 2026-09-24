@@ -46,8 +46,10 @@ export interface MockPackage {
 import { getCurrentLanguage } from '@/lib/i18n';
 
 export function getMockPriceString(locale?: string): string {
-  const lang = (locale || getCurrentLanguage())?.startsWith('ar') ? 'ar' : 'tr';
-  return lang === 'ar' ? 'ر.س 69,99' : '₺69,99';
+  const rawLang = locale || getCurrentLanguage();
+  if (rawLang?.startsWith('ar')) return 'ر.س 69,99';
+  if (rawLang?.startsWith('en')) return '$2.99';
+  return '₺69,99';
 }
 
 export const MOCK_OFFERING: MockPackage = {

@@ -14,7 +14,7 @@ import {
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Colors, Fonts, FontSizes, Spacing, BorderRadius } from '@/lib/theme';
-import { useIncomes, useIncomeCategories } from '@/lib/hooks/useEnvelopes';
+import { useIncomes, useIncomeCategories, useMonthlyStats } from '@/lib/hooks/useEnvelopes';
 import { useEnvelopesStore } from '@/store/envelopes';
 import { formatCurrency } from '@/lib/formatCurrency';
 import PostmarkRing from '@/components/PostmarkRing';
@@ -25,22 +25,27 @@ import AppIcon from '@/components/AppIcon';
 import { queryClient } from '@/lib/queryClient';
 
 export default function IncomesScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { data: incomes = [], isLoading, isError } = useIncomes();
   const { data: categories = [] } = useIncomeCategories();
   const deleteIncome = useEnvelopesStore((s) => s.deleteIncome);
   const router = useRouter();
 
+  const stats = useMonthlyStats();
   const totalIncome = incomes.reduce((sum, item) => sum + Number(item.amount), 0);
+  const totalSpent = stats.totalSpent;
+  const netIncome = totalIncome - totalSpent;
 
+  const currentLang = i18n.language;
   const currentMonth = new Date().toLocaleDateString(
-    t('settings.languageName') === 'Türkçe' ? 'tr-TR' : 'ar-SA',
+    currentLang === 'ar' ? 'ar-SA' : currentLang === 'en' ? 'en-US' : 'tr-TR',
     { month: 'long', year: 'numeric' },
   );
 
   const handleDeleteIncome = async (id: string) => {
     await deleteIncome(id);
     await queryClient.invalidateQueries({ queryKey: ['incomes'] });
+    await queryClient.invalidateQueries({ queryKey: ['envelopes'] });
   };
 
   const renderItem = ({ item }: { item: any }) => {
@@ -90,43 +95,43 @@ export default function IncomesScreen() {
             )}
 
             <PostmarkRing
-              totalBudget={totalIncome > 0 ? totalIncome : 100}
-              totalSpent={totalIncome}
+              totalBudget={totalIncome}
+              totalSpent={totalSpent}
             />
 
             <View style={styles.summaryRow}>
-              <Pressable
-                style={styles.summaryItem}
-                onPress={() => router.push('/add-income-category' as any)}
-              >
+              <View style={styles.summaryItem}>
                 <Text style={styles.summaryValue}>
                   {formatCurrency(totalIncome)}
                 </Text>
-                <Text style={styles.summaryLabel}>Toplam Gelir</Text>
-              </Pressable>
-              <View style={styles.summaryDivider} />
-              <View style={styles.summaryItem}>
-                <Text style={styles.summaryValue}>
-                  {incomes.length}
-                </Text>
-                <Text style={styles.summaryLabel}>İşlem Sayısı</Text>
+                <Text style={styles.summaryLabel}>{t('incomes.totalIncome')}</Text>
               </View>
+              <View style={styles.summaryDivider} />
+              <Pressable
+                style={styles.summaryItem}
+                onPress={() => router.push('/(tabs)/expenses' as any)}
+              >
+                <Text style={[styles.summaryValue, { color: totalSpent > 0 ? Colors.stamp : Colors.paper }]}>
+                  {formatCurrency(totalSpent)}
+                </Text>
+                <Text style={styles.summaryLabel}>{t('incomes.totalOutcome')}</Text>
+              </Pressable>
               <View style={styles.summaryDivider} />
               <View style={styles.summaryItem}>
                 <Text
                   style={[
                     styles.summaryValue,
-                    { color: Colors.sage },
+                    { color: netIncome >= 0 ? Colors.sage : Colors.stamp },
                   ]}
                 >
-                  {formatCurrency(totalIncome)}
+                  {formatCurrency(netIncome)}
                 </Text>
-                <Text style={styles.summaryLabel}>Net Gelir</Text>
+                <Text style={styles.summaryLabel}>{t('incomes.netIncome')}</Text>
               </View>
             </View>
 
             <View style={styles.sectionHeaderRow}>
-              <Text style={styles.sectionTitle}>Gelir Kalemleri</Text>
+              <Text style={styles.sectionTitle}>{t('incomes.incomeItems')}</Text>
               <Pressable onPress={() => router.push('/add-income-category' as any)}>
                 <Text style={styles.addCategoryText}>{t('incomes.addCategory')}</Text>
               </Pressable>
@@ -137,25 +142,24 @@ export default function IncomesScreen() {
                 <AppIcon name="wallet-outline" size={32} color={Colors.sage} />
                 <Text style={styles.emptyStateTitle}>{t('incomes.noIncomes')}</Text>
                 <Text style={styles.emptyStateDesc}>
-                  Gelirlerinizi takip etmek için harcama öncesi bütçenizi girin.
+                  {t('incomes.emptyDesc')}
                 </Text>
               </View>
             )}
           </View>
         }
-        ListFooterComponent={
-          <View style={styles.footer}>
-            <PrimaryButton
-              title={t('incomes.addIncome')}
-              icon="add-outline"
-              onPress={() => router.push('/add-income' as any)}
-              style={styles.addButton}
-            />
-          </View>
-        }
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
       />
+
+      <View style={styles.footer}>
+        <PrimaryButton
+          title={t('incomes.addIncome')}
+          icon="add-outline"
+          onPress={() => router.push('/add-income' as any)}
+          style={styles.addButton}
+        />
+      </View>
     </SafeAreaView>
   );
 }
@@ -275,9 +279,9 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   footer: {
-    paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.lg,
-    alignItems: 'center',
+    padding: Spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.06)',
   },
   addButton: {
     width: '100%',

@@ -29,7 +29,7 @@ import { useSubscriptionStore } from '@/store/subscription';
 import { Alert } from 'react-native';
 
 export default function DashboardScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { data: envelopes, isLoading, isError } = useEnvelopes();
   const stats = useMonthlyStats();
   const user = useAuthStore((s) => s.user);
@@ -77,8 +77,9 @@ export default function DashboardScreen() {
     ? stats.totalSpent
     : mockSummary.totalSpent;
 
+  const currentLang = i18n.language;
   const currentMonth = new Date().toLocaleDateString(
-    t('settings.languageName') === 'Türkçe' ? 'tr-TR' : 'ar-SA',
+    currentLang === 'ar' ? 'ar-SA' : currentLang === 'en' ? 'en-US' : 'tr-TR',
     { month: 'long', year: 'numeric' },
   );
 
@@ -172,15 +173,17 @@ export default function DashboardScreen() {
           </View>
         }
         ListFooterComponent={
-          <View style={styles.footer}>
+          <View style={styles.footerContainer}>
             {!isPremium && <LockedEnvelopeCard />}
 
-            <PrimaryButton
-              title={t('dashboard.addExpense')}
-              icon="pencil-outline"
-              onPress={() => router.push('/add-expense')}
-              style={styles.addExpenseButton}
-            />
+            <View style={styles.buttonWrapper}>
+              <PrimaryButton
+                title={t('dashboard.addExpense')}
+                icon="pencil-outline"
+                onPress={() => router.push('/add-expense')}
+                style={styles.addExpenseButton}
+              />
+            </View>
           </View>
         }
         contentContainerStyle={styles.listContent}
@@ -196,7 +199,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.ink,
   },
   listContent: {
-    paddingBottom: Spacing.xxxl,
+    paddingBottom: 100,
   },
   header: {
     paddingTop: Spacing.lg,
@@ -212,6 +215,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.display,
     fontSize: FontSizes.xxl,
     color: Colors.paper,
+    paddingRight: Spacing.md, // iOS özel font kırpılmasını önlemek için daha fazla boşluk
   },
   month: {
     fontFamily: Fonts.bodyMedium,
@@ -313,10 +317,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 20,
   },
-  footer: {
+  footerContainer: {
+    paddingTop: Spacing.xs,
+  },
+  buttonWrapper: {
     paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.lg,
-    alignItems: 'center',
+    paddingTop: Spacing.xs,
   },
   addExpenseButton: {
     width: '100%',

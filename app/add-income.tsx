@@ -56,6 +56,7 @@ export default function AddIncomeModal() {
       });
 
       await queryClient.invalidateQueries({ queryKey: ['incomes'] });
+      await queryClient.invalidateQueries({ queryKey: ['envelopes'] });
 
       router.back();
     } catch (e) {
@@ -78,7 +79,7 @@ export default function AddIncomeModal() {
           <Pressable onPress={() => router.back()} style={styles.closeButton}>
             <Ionicons name="close" size={20} color={Colors.paper} />
           </Pressable>
-          <Text style={styles.title}>Gelir Ekle</Text>
+          <Text style={styles.title}>{t('addIncomeModal.title')}</Text>
           <View style={{ width: 36 }} />
         </View>
 

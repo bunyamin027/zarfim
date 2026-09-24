@@ -157,16 +157,7 @@ const DEFAULT_INCOME_CATEGORIES: LocalIncomeCategory[] = [
   }
 ];
 
-const DEFAULT_INCOMES: LocalIncome[] = [
-  {
-    id: 'inc-1',
-    category_id: 'inc-cat-1',
-    amount: 15000,
-    occurred_at: new Date().toISOString(),
-    note: 'Aylık Maaş',
-    created_at: new Date().toISOString(),
-  }
-];
+const DEFAULT_INCOMES: LocalIncome[] = [];
 
 export const useEnvelopesStore = create<EnvelopesState>()(
   persist(

@@ -75,7 +75,7 @@ export default function AddEnvelopeModal() {
     // Freemium kontrolü — Yeni zarf eklenirken 3 zarf sınırı
     if (!isEditing && !isPremium && (envelopes?.length || 0) >= 3) {
       Alert.alert(
-        'Ücretsiz Zarf Sınırı',
+        t('addEnvelopeModal.limitReachedTitle'),
         t('addEnvelopeModal.limitReachedMsg'),
         [
           { text: t('common.cancel'), style: 'cancel' },
@@ -134,7 +134,7 @@ export default function AddEnvelopeModal() {
             <Ionicons name="close" size={20} color={Colors.paper} />
           </Pressable>
           <Text style={styles.title}>
-            {isEditing ? 'Zarfı Düzenle' : 'Yeni Zarf Oluştur'}
+            {isEditing ? t('addEnvelopeModal.editTitle') : t('addEnvelopeModal.title')}
           </Text>
           <View style={{ width: 36 }} />
         </View>

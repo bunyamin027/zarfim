@@ -46,7 +46,8 @@
     "grocery": "البقالة",
     "transport": "المواصلات",
     "entertainment": "الترفيه",
-    "bills": "الفواتير"
+    "bills": "الفواتير",
+    "general": "عام"
   },
   "addExpenseModal": {
     "title": "إضافة نفقة",
@@ -65,7 +66,13 @@
     "title": "المداخيل",
     "addIncome": "إضافة دخل",
     "addCategory": "+ إضافة فئة",
-    "noIncomes": "لم تتم إضافة أي دخل بعد."
+    "noIncomes": "لم تتم إضافة أي دخل بعد.",
+    "totalIncome": "إجمالي الدخل",
+    "totalOutcome": "إجمالي المصاريف",
+    "transactionCount": "عدد المعاملات",
+    "netIncome": "صافي الدخل",
+    "incomeItems": "بنود الدخل",
+    "emptyDesc": "أدخل ميزانية دخلك لتتبع تدفقاتك المالية قبل الإنفاق."
   },
   "addIncomeModal": {
     "title": "إضافة دخل",
@@ -109,7 +116,8 @@
     "noTransactions": "لا توجد مصاريف مضافة لهذا المظروف بعد.",
     "deleteTransactionConfirm": "هل أنت متأكد أنك تريد حذف هذا المصروف؟",
     "deleteEnvelopeConfirm": "هل أنت متأكد أنك تريد حذف هذا المظروف وجميع مصاريفه؟",
-    "addExpenseForThis": "+ إضافة مصروف لهذا المظروف"
+    "addExpenseForThis": "+ إضافة مصروف لهذا المظروف",
+    "notFound": "المظروف غير موجود."
   },
   "locked": {
     "rentTracking": "تتبع الإيجار",
@@ -141,7 +149,8 @@
     "deleteAccountFinalConfirm": "لا يمكن التراجع عن هذا الإجراء. سيتم حذف حسابك وجميع بياناتك نهائياً. هل تريد المتابعة؟",
     "deleteAccountButton": "حذف الحساب نهائياً",
     "deleteAccountSuccess": "تم حذف حسابك بنجاح.",
-    "deleteAccountError": "حدث خطأ أثناء حذف الحساب. يرجى المحاولة مرة أخرى."
+    "deleteAccountError": "حدث خطأ أثناء حذف الحساب. يرجى المحاولة مرة أخرى.",
+    "continueAsGuest": "الاستمرار كضيف"
   },
   "paywall": {
     "title": "مظروفي بريميوم",
@@ -180,6 +189,7 @@
   "settings": {
     "title": "الإعدادات",
     "notLoggedIn": "لم يتم تسجيل الدخول",
+    "loginOrRegister": "تسجيل الدخول / إنشاء حساب",
     "subscription": "الاشتراك",
     "upgradePremium": "الترقية إلى بريميوم",
     "subscriptionStatus": "حالة الاشتراك",
@@ -192,6 +202,7 @@
     "currency": "العملة",
     "notifications": "الإشعارات",
     "notificationsOn": "مفعّلة",
+    "notificationsOff": "معطّلة",
     "account": "الحساب",
     "deleteAccount": "حذف حسابي",
     "deleteAccountWarning": "سيتم حذف جميع بياناتك نهائياً",
@@ -204,6 +215,7 @@
     "languageChangeTitle": "تغيير اللغة",
     "languageChangeMsg": "تغيير اللغة يتطلب إعادة تشغيل التطبيق.",
     "restart": "إعادة التشغيل",
+    "devReloadNotice": "إعادة التشغيل التلقائي لا تعمل في وضع التطوير. يرجى إغلاق التطبيق وفتحه يدوياً.",
     "legal": "قانوني",
     "termsOfUse": "شروط الاستخدام (EULA)",
     "privacyPolicy": "سياسة الخصوصية",
@@ -245,6 +257,8 @@
     "exportTableEnvelope": "المظروف",
     "exportTableNote": "ملاحظة / المتجر",
     "exportTableAmount": "المبلغ",
-    "exportPdfFooter": "تم الإنشاء بواسطة تطبيق مظروفي للميزانية • kahramanapp.com"
+    "exportPdfFooter": "تم الإنشاء بواسطة تطبيق مظروفي للميزانية • kahramanapp.com",
+    "authRequiredTitle": "تسجيل الدخول للتقارير",
+    "authRequiredDesc": "قم بتسجيل الدخول أو إنشاء حساب لتحليل نفقاتك بالتفصيل والتحكم في ميزانيتك من خلال الرسوم البيانية والرؤى الذكية."
   }
 }

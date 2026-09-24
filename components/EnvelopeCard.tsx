@@ -83,7 +83,7 @@ export default function EnvelopeCard({ envelope }: EnvelopeCardProps) {
               <AppIcon name={icon} size={20} color="#FFFFFF" />
             </View>
             <View style={styles.headerText}>
-              <Text style={styles.name}>{name}</Text>
+              <Text style={styles.name}>{(envelope as any).nameKey ? t((envelope as any).nameKey) : name}</Text>
               <Text style={styles.amounts}>
                 <Text style={[styles.spent, { color: progressColor }]}>
                   {formatCurrency(spent)}

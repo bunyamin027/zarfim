@@ -11,7 +11,7 @@ import AppIcon from '@/components/AppIcon';
 import { queryClient } from '@/lib/queryClient';
 
 export default function ExpensesScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const transactions = useEnvelopesStore((s) => s.transactions);
   const envelopes = useEnvelopesStore((s) => s.envelopes);
@@ -28,6 +28,7 @@ export default function ExpensesScreen() {
     await deleteTransaction(id);
     await queryClient.invalidateQueries({ queryKey: ['transactions'] });
     await queryClient.invalidateQueries({ queryKey: ['envelopes'] });
+    await queryClient.invalidateQueries({ queryKey: ['incomes'] });
   };
 
   const renderItem = ({ item }: { item: any }) => {
@@ -42,10 +43,10 @@ export default function ExpensesScreen() {
             <AppIcon name={envelope?.icon || 'cart-outline'} size={18} color="#FFFFFF" />
           </View>
           <View style={styles.infoContainer}>
-            <Text style={styles.envelopeName}>{envelope?.name || 'Genel'}</Text>
+            <Text style={styles.envelopeName}>{(envelope as any)?.nameKey ? t((envelope as any).nameKey) : envelope?.name || t('envelope.general')}</Text>
             {item.note && <Text style={styles.note}>{item.note}</Text>}
             <Text style={styles.date}>
-              {new Date(item.occurred_at).toLocaleDateString()}
+              {new Date(item.occurred_at).toLocaleDateString(i18n.language === 'ar' ? 'ar-SA' : i18n.language === 'en' ? 'en-US' : 'tr-TR')}
             </Text>
           </View>
           <Text style={styles.amount}>−{formatCurrency(item.amount)}</Text>

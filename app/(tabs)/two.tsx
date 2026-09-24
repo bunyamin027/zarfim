@@ -30,7 +30,7 @@ import AppIcon from '@/components/AppIcon';
 import { isRTL } from '@/lib/i18n';
 
 export default function ReportsScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const isPremium = useSubscriptionStore((s) => s.isPremium);
@@ -111,10 +111,11 @@ export default function ReportsScreen() {
 
       const totalSpent = transactions.reduce((sum, tx) => sum + tx.amount, 0);
       const isArabic = isRTL();
+      const exportLocale = isArabic ? 'ar-SA' : i18n.language === 'en' ? 'en-US' : 'tr-TR';
 
       const tableRows = transactions
         .map((tx) => {
-          const dateStr = new Date(tx.date).toLocaleDateString(isArabic ? 'ar-SA' : 'tr-TR');
+          const dateStr = new Date(tx.date).toLocaleDateString(exportLocale);
           const envelopeName = tx.envelope_name_key ? t(tx.envelope_name_key) : tx.envelope_name;
           const note = tx.note || '-';
           const amountStr = formatCurrency(tx.amount);
@@ -152,7 +153,7 @@ export default function ReportsScreen() {
         <body>
           <div class="header">
             <h1 class="title">${t('reports.exportPdfHeaderTitle')}</h1>
-            <div class="subtitle">${new Date().toLocaleDateString(isArabic ? 'ar-SA' : 'tr-TR', { month: 'long', year: 'numeric' })}</div>
+            <div class="subtitle">${new Date().toLocaleDateString(exportLocale, { month: 'long', year: 'numeric' })}</div>
           </div>
           <div class="summary-box">
             <div class="summary-title">${t('dashboard.spent')}</div>
@@ -245,8 +246,22 @@ export default function ReportsScreen() {
   if (!user) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.centerContent}>
-          <Text style={styles.subtitle}>{t('settings.notLoggedIn')}</Text>
+        <View style={styles.header}>
+          <Text style={styles.title}>{t('reports.title')}</Text>
+        </View>
+        <View style={styles.authContainer}>
+          <View style={styles.authIconContainer}>
+            <AppIcon name="bar-chart-outline" size={48} color={Colors.gold} />
+          </View>
+          <Text style={styles.authTitle}>{t('reports.authRequiredTitle') || 'Raporlar İçin Giriş Yapın'}</Text>
+          <Text style={styles.authDesc}>
+            {t('reports.authRequiredDesc') || 'Harcamalarınızı detaylı analiz etmek, grafikler ve AI içgörüleri ile bütçenizi kontrol altına almak için giriş yapın veya hesap oluşturun.'}
+          </Text>
+          <PrimaryButton 
+            title={t('settings.loginOrRegister') || 'Giriş Yap / Kayıt Ol'} 
+            onPress={() => router.push('/auth')} 
+            style={styles.authButton}
+          />
         </View>
       </SafeAreaView>
     );
@@ -446,6 +461,42 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.display,
     fontSize: FontSizes.xxl,
     color: Colors.paper,
+  },
+  authContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: Spacing.xl,
+    paddingBottom: 100,
+  },
+  authIconContainer: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    backgroundColor: Colors.inkLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.lg,
+    borderWidth: 2,
+    borderColor: Colors.gold + '40',
+  },
+  authTitle: {
+    fontFamily: Fonts.displayMedium,
+    fontSize: FontSizes.xl,
+    color: Colors.paper,
+    marginBottom: Spacing.sm,
+    textAlign: 'center',
+  },
+  authDesc: {
+    fontFamily: Fonts.body,
+    fontSize: FontSizes.md,
+    color: Colors.paperDark,
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: Spacing.xl,
+  },
+  authButton: {
+    width: '100%',
   },
   loadingText: {
     fontFamily: Fonts.body,

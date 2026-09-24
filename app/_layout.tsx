@@ -21,11 +21,15 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import '@/lib/i18n'; // i18n modülünü başlat
 
+import * as SplashScreen from 'expo-splash-screen';
+import { Colors } from '@/lib/theme';
 import { queryClient } from '@/lib/queryClient';
 import { useAuthStore } from '@/store/auth';
 import { configureRevenueCat } from '@/lib/revenuecat';
 import { useSubscriptionStore } from '@/store/subscription';
 import { initializeLanguage } from '@/lib/i18n';
+
+SplashScreen.preventAutoHideAsync();
 
 export {
   ErrorBoundary,
@@ -52,8 +56,10 @@ export default function RootLayout() {
   const checkSubscription = useSubscriptionStore((s) => s.checkSubscription);
 
   useEffect(() => {
-    if (error) throw error;
-  }, [error]);
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
 
   // Auth ve dil state'lerini başlat
   useEffect(() => {
@@ -70,7 +76,7 @@ export default function RootLayout() {
   }, [isAuthenticated]);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: Colors.ink }}>
       <QueryClientProvider client={queryClient}>
         <StatusBar style="light" />
         <RootLayoutNav />
@@ -81,6 +87,7 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const user = useAuthStore((s) => s.user);
   const segments = useSegments();
   const router = useRouter();
 
@@ -90,14 +97,18 @@ function RootLayoutNav() {
     if (!isAuthenticated && !inAuthGroup) {
       // Giriş yapılmamış ve auth ekranında değil → auth'a yönlendir
       router.replace('/auth');
-    } else if (isAuthenticated && inAuthGroup) {
-      // Giriş yapılmış ama hâlâ auth ekranında → ana sayfaya yönlendir
+    } else if (user && inAuthGroup) {
+      // Gerçekten giriş yapılmış bir kullanıcı auth ekranındaysa → ana sayfaya yönlendir
       router.replace('/');
     }
-  }, [isAuthenticated, segments]);
+  }, [isAuthenticated, user, segments]);
 
   return (
-    <Stack>
+    <Stack
+      screenOptions={{
+        contentStyle: { backgroundColor: Colors.ink },
+      }}
+    >
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
         name="auth"

@@ -9,7 +9,11 @@ import { useTranslation } from 'react-i18next';
 import { Colors, Fonts, FontSizes, Spacing, BorderRadius, Shadows } from '@/lib/theme';
 import AppIcon from './AppIcon';
 
-export default function LockedEnvelopeCard() {
+interface LockedEnvelopeCardProps {
+  style?: any;
+}
+
+export default function LockedEnvelopeCard({ style }: LockedEnvelopeCardProps = {}) {
   const router = useRouter();
   const { t } = useTranslation();
 
@@ -18,6 +22,7 @@ export default function LockedEnvelopeCard() {
       onPress={() => router.push('/paywall')}
       style={({ pressed }) => [
         styles.container,
+        style,
         pressed && styles.pressed,
       ]}
     >
@@ -53,6 +58,7 @@ const styles = StyleSheet.create({
   container: {
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.md,
+    alignSelf: 'stretch',
   },
   pressed: {
     opacity: 0.85,
@@ -75,10 +81,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
+    marginEnd: Spacing.md,
   },
   iconContainer: {
-    width: 38,
-    height: 38,
+    width: 40,
+    height: 40,
     borderRadius: BorderRadius.md,
     backgroundColor: 'rgba(201, 151, 58, 0.12)',
     alignItems: 'center',
@@ -101,6 +108,7 @@ const styles = StyleSheet.create({
   },
   lockSection: {
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 4,
   },
   premiumBadge: {
@@ -120,12 +128,16 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.sm,
     borderTopWidth: 1,
     borderTopColor: 'rgba(201, 151, 58, 0.2)',
+    width: '100%',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   ctaText: {
     fontFamily: Fonts.bodyMedium,
     fontSize: FontSizes.xs,
     color: Colors.gold,
     letterSpacing: 0.2,
+    textAlign: 'center',
+    width: '100%',
   },
 });

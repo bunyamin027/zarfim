@@ -31,6 +31,8 @@ import {
   getCurrentLanguage,
   type SupportedLanguage,
 } from '@/lib/i18n';
+import { queryClient } from '@/lib/queryClient';
+import { useCurrencyStore, SUPPORTED_CURRENCIES, type CurrencyCode } from '@/store/currency';
 
 function SettingsRow({
   icon,
@@ -78,14 +80,16 @@ export default function SettingsScreen() {
   const { user, signOut } = useAuthStore();
   const { isPremium, isLoading, error, restore, clearError } = useSubscriptionStore();
   const [showLanguagePicker, setShowLanguagePicker] = useState(false);
+  const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const { currency, setCurrency } = useCurrencyStore();
 
   const currentLang = getCurrentLanguage();
 
   const handleRestore = async () => {
     const success = await restore();
     if (success) {
-      Alert.alert('Geri Yüklendi', t('settings.restoreSuccessMsg'));
+      Alert.alert(t('settings.restoreSuccessTitle'), t('settings.restoreSuccessMsg'));
     } else if (error) {
       Alert.alert(t('common.info'), error);
       clearError();
@@ -164,7 +168,7 @@ export default function SettingsScreen() {
               } catch {
                 Alert.alert(
                   t('common.info'),
-                  'Development modunda otomatik yeniden başlatma çalışmaz. Uygulamayı manuel kapatıp açın.',
+                  t('settings.devReloadNotice'),
                 );
               }
             },
@@ -177,10 +181,21 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Ayarlar</Text>
+        <Text style={styles.title}>{t('settings.title')}</Text>
 
         {/* Profil */}
-        <View style={styles.profileCard}>
+        <Pressable
+          style={({ pressed }) => [
+            styles.profileCard,
+            !user && pressed && styles.profileCardPressed,
+          ]}
+          onPress={() => {
+            if (!user) {
+              router.push('/auth');
+            }
+          }}
+          disabled={!!user}
+        >
           <View style={styles.avatarContainer}>
             <AppIcon name="person-outline" size={24} color={Colors.gold} />
           </View>
@@ -188,19 +203,29 @@ export default function SettingsScreen() {
             <Text style={styles.profileEmail}>
               {user?.email || t('settings.notLoggedIn')}
             </Text>
-            <View style={[
-              styles.tierBadge,
-              isPremium ? styles.tierPremium : styles.tierFree,
-            ]}>
-              <Text style={[
-                styles.tierText,
-                isPremium ? styles.tierTextPremium : styles.tierTextFree,
+            <View style={styles.profileBadgeRow}>
+              <View style={[
+                styles.tierBadge,
+                isPremium ? styles.tierPremium : styles.tierFree,
               ]}>
-                {isPremium ? t('settings.premium') : t('settings.free')}
-              </Text>
+                <Text style={[
+                  styles.tierText,
+                  isPremium ? styles.tierTextPremium : styles.tierTextFree,
+                ]}>
+                  {isPremium ? t('settings.premium') : t('settings.free')}
+                </Text>
+              </View>
+              {!user && (
+                <Text style={styles.loginHintText}>
+                  {t('settings.loginOrRegister')}
+                </Text>
+              )}
             </View>
           </View>
-        </View>
+          {!user && (
+            <Ionicons name="chevron-forward" size={18} color="#64748B" />
+          )}
+        </Pressable>
 
         {/* Abonelik */}
         <SectionHeader title={t('settings.subscription')} />
@@ -247,12 +272,13 @@ export default function SettingsScreen() {
         <SettingsRow
           icon="cash-outline"
           title={t('settings.currency')}
-          value={currentLang === 'ar' ? 'ر.س SAR' : '₺ TRY'}
+          value={SUPPORTED_CURRENCIES[currency]?.label || currency}
+          onPress={() => setShowCurrencyPicker(true)}
         />
         <SettingsRow
           icon="notifications-outline"
           title={t('settings.notifications')}
-          value={notificationsEnabled ? t('settings.notificationsOn') : 'Kapalı'}
+          value={notificationsEnabled ? t('settings.notificationsOn') : t('settings.notificationsOff')}
           onPress={() => setNotificationsEnabled(!notificationsEnabled)}
         />
 
@@ -284,21 +310,25 @@ export default function SettingsScreen() {
         />
 
         {/* Hesap */}
-        <SectionHeader title={t('settings.account')} />
+        {user && (
+          <>
+            <SectionHeader title={t('settings.account')} />
 
-        <SettingsRow
-          icon="trash-outline"
-          title={t('settings.deleteAccount')}
-          onPress={handleDeleteAccount}
-          danger
-        />
+            <SettingsRow
+              icon="trash-outline"
+              title={t('settings.deleteAccount')}
+              onPress={handleDeleteAccount}
+              danger
+            />
 
-        <SettingsRow
-          icon="log-out-outline"
-          title={t('auth.signOut')}
-          onPress={handleSignOut}
-          danger
-        />
+            <SettingsRow
+              icon="log-out-outline"
+              title={t('auth.signOut')}
+              onPress={handleSignOut}
+              danger
+            />
+          </>
+        )}
 
         {/* Uygulama bilgisi */}
         <View style={styles.appInfo}>
@@ -354,6 +384,60 @@ export default function SettingsScreen() {
           </View>
         </Pressable>
       </Modal>
+
+      {/* Modern Minimalist Para Birimi Seçici Modal */}
+      <Modal
+        visible={showCurrencyPicker}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowCurrencyPicker(false)}
+      >
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setShowCurrencyPicker(false)}
+        >
+          <View style={styles.languagePicker}>
+            <View style={styles.modalGrabber} />
+            <Text style={styles.languagePickerTitle}>{t('settings.currency')}</Text>
+
+            {(Object.entries(SUPPORTED_CURRENCIES) as [CurrencyCode, typeof SUPPORTED_CURRENCIES[CurrencyCode]][]).map(
+              ([code, item]) => (
+                <Pressable
+                  key={code}
+                  style={[
+                    styles.languageOption,
+                    code === currency && styles.languageOptionActive,
+                  ]}
+                  onPress={async () => {
+                    setCurrency(code);
+                    setShowCurrencyPicker(false);
+                    await queryClient.invalidateQueries({ queryKey: ['envelopes'] });
+                    await queryClient.invalidateQueries({ queryKey: ['transactions'] });
+                    await queryClient.invalidateQueries({ queryKey: ['incomes'] });
+                  }}
+                >
+                  <Text style={[
+                    styles.languageOptionText,
+                    code === currency && styles.languageOptionTextActive,
+                  ]}>
+                    {item.label}
+                  </Text>
+                  {code === currency && (
+                    <Ionicons name="checkmark-circle" size={20} color={Colors.gold} />
+                  )}
+                </Pressable>
+              ),
+            )}
+
+            <Pressable
+              style={styles.languageCancelButton}
+              onPress={() => setShowCurrencyPicker(false)}
+            >
+              <Text style={styles.languageCancelText}>{t('common.cancel')}</Text>
+            </Pressable>
+          </View>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -384,6 +468,19 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.06)',
+  },
+  profileCardPressed: {
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+  },
+  profileBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  loginHintText: {
+    fontFamily: Fonts.bodyMedium,
+    fontSize: FontSizes.xs,
+    color: Colors.gold,
   },
   avatarContainer: {
     width: 44,

@@ -12,6 +12,7 @@ import { I18nManager } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import tr from '@/locales/tr.json';
+import en from '@/locales/en.json';
 import ar from '@/locales/ar.json';
 
 const LANGUAGE_KEY = '@zarfim_language';
@@ -19,6 +20,7 @@ const LANGUAGE_KEY = '@zarfim_language';
 // Desteklenen diller
 export const SUPPORTED_LANGUAGES = {
   tr: { name: 'Türkçe', nativeName: 'Türkçe', rtl: false },
+  en: { name: 'English', nativeName: 'English', rtl: false },
   ar: { name: 'العربية', nativeName: 'العربية', rtl: true },
 } as const;
 
@@ -30,6 +32,7 @@ function getDeviceLanguage(): SupportedLanguage {
     const locales = getLocales();
     const deviceLang = locales[0]?.languageCode ?? 'tr';
     if (deviceLang === 'ar') return 'ar';
+    if (deviceLang === 'en') return 'en';
     return 'tr'; // Varsayılan Türkçe
   } catch {
     return 'tr';
@@ -42,9 +45,9 @@ let cachedLanguage: SupportedLanguage | null = null;
 export async function loadSavedLanguage(): Promise<SupportedLanguage> {
   try {
     const saved = await AsyncStorage.getItem(LANGUAGE_KEY);
-    if (saved && (saved === 'tr' || saved === 'ar')) {
-      cachedLanguage = saved;
-      return saved;
+    if (saved && (saved === 'tr' || saved === 'en' || saved === 'ar')) {
+      cachedLanguage = saved as SupportedLanguage;
+      return saved as SupportedLanguage;
     }
   } catch {}
   const deviceLang = getDeviceLanguage();
@@ -61,7 +64,7 @@ export async function saveLanguage(lang: SupportedLanguage): Promise<void> {
 
 // RTL yönünü ayarla
 export function applyRTL(lang: SupportedLanguage): void {
-  const isRTL = SUPPORTED_LANGUAGES[lang].rtl;
+  const isRTL = SUPPORTED_LANGUAGES[lang]?.rtl ?? false;
   if (I18nManager.isRTL !== isRTL) {
     I18nManager.forceRTL(isRTL);
     I18nManager.allowRTL(isRTL);
@@ -72,6 +75,7 @@ export function applyRTL(lang: SupportedLanguage): void {
 i18n.use(initReactI18next).init({
   resources: {
     tr: { translation: tr },
+    en: { translation: en },
     ar: { translation: ar },
   },
   lng: cachedLanguage || getDeviceLanguage(),

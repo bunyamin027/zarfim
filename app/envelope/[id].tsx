@@ -44,7 +44,7 @@ export default function EnvelopeDetailScreen() {
           </Pressable>
         </View>
         <View style={styles.centerContent}>
-          <Text style={styles.notFoundText}>Zarf bulunamadı.</Text>
+          <Text style={styles.notFoundText}>{t('envelopeDetail.notFound')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -124,7 +124,7 @@ export default function EnvelopeDetailScreen() {
               <AppIcon name={envelope.icon} size={22} color="#FFFFFF" />
             </View>
             <View style={styles.cardHeaderInfo}>
-              <Text style={styles.envelopeName}>{envelope.name}</Text>
+              <Text style={styles.envelopeName}>{(envelope as any).nameKey ? t((envelope as any).nameKey) : envelope.name}</Text>
               <Text style={styles.amountsText}>
                 <Text style={{ color: progressColor, fontFamily: Fonts.bodySemiBold }}>
                   {formatCurrency(spent)}
@@ -167,7 +167,7 @@ export default function EnvelopeDetailScreen() {
         </View>
 
         {/* İşlem Geçmişi */}
-        <View style={styles.sectionHeader}>
+        <View style={styles.sectionHeaderRow}>
           <Text style={styles.sectionTitle}>{t('envelopeDetail.transactions')}</Text>
           <Pressable onPress={handleDeleteEnvelope}>
             <Text style={styles.deleteEnvelopeText}>{t('common.delete')}</Text>

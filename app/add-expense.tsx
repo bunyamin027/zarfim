@@ -74,6 +74,7 @@ export default function AddExpenseModal() {
 
       await queryClient.invalidateQueries({ queryKey: ['envelopes'] });
       await queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      await queryClient.invalidateQueries({ queryKey: ['incomes'] });
 
       router.back();
     } catch (e) {
@@ -96,7 +97,7 @@ export default function AddExpenseModal() {
           <Pressable onPress={() => router.back()} style={styles.closeButton}>
             <Ionicons name="close" size={20} color={Colors.paper} />
           </Pressable>
-          <Text style={styles.title}>Harcama Ekle</Text>
+          <Text style={styles.title}>{t('addExpenseModal.title')}</Text>
           <View style={{ width: 36 }} />
         </View>
 
@@ -123,7 +124,7 @@ export default function AddExpenseModal() {
                     <AppIcon name={env.icon} size={15} color={isSelected ? '#FFFFFF' : '#8E8E93'} />
                   </View>
                   <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
-                    {env.name}
+                    {(env as any).nameKey ? t((env as any).nameKey) : env.name}
                   </Text>
                 </Pressable>
               );

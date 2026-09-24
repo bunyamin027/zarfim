@@ -46,7 +46,8 @@
     "grocery": "Market",
     "transport": "Ulaşım",
     "entertainment": "Eğlence",
-    "bills": "Faturalar"
+    "bills": "Faturalar",
+    "general": "Genel"
   },
   "addExpenseModal": {
     "title": "Harcama Ekle",
@@ -65,7 +66,13 @@
     "title": "Gelirlerim",
     "addIncome": "Gelir Ekle",
     "addCategory": "+ Kategori Ekle",
-    "noIncomes": "Henüz gelir eklenmedi."
+    "noIncomes": "Henüz gelir eklenmedi.",
+    "totalIncome": "Toplam Gelir",
+    "totalOutcome": "Toplam Gider",
+    "transactionCount": "İşlem Sayısı",
+    "netIncome": "Net Gelir",
+    "incomeItems": "Gelir Kalemleri",
+    "emptyDesc": "Gelirlerinizi takip etmek için harcama öncesi bütçenizi girin."
   },
   "addIncomeModal": {
     "title": "Gelir Ekle",
@@ -109,7 +116,8 @@
     "noTransactions": "Bu zarfa ait henüz bir harcama yok.",
     "deleteTransactionConfirm": "Bu harcamayı silmek istediğinize emin misiniz?",
     "deleteEnvelopeConfirm": "Bu zarfı ve tüm harcama geçmişini silmek istediğinize emin misiniz?",
-    "addExpenseForThis": "+ Bu Zarfa Harcama Ekle"
+    "addExpenseForThis": "+ Bu Zarfa Harcama Ekle",
+    "notFound": "Zarf bulunamadı."
   },
   "locked": {
     "rentTracking": "Kira Takibi",
@@ -141,7 +149,8 @@
     "deleteAccountFinalConfirm": "Bu işlem geri alınamaz. Hesabınız ve tüm verileriniz kalıcı olarak silinecektir. Devam etmek istiyor musunuz?",
     "deleteAccountButton": "Hesabı Kalıcı Olarak Sil",
     "deleteAccountSuccess": "Hesabınız başarıyla silindi.",
-    "deleteAccountError": "Hesap silinirken bir hata oluştu. Lütfen tekrar deneyin."
+    "deleteAccountError": "Hesap silinirken bir hata oluştu. Lütfen tekrar deneyin.",
+    "continueAsGuest": "Misafir olarak devam et"
   },
   "paywall": {
     "title": "Zarfım Premium",
@@ -180,6 +189,7 @@
   "settings": {
     "title": "Ayarlar",
     "notLoggedIn": "Giriş yapılmamış",
+    "loginOrRegister": "Giriş Yap / Kayıt Ol",
     "subscription": "Abonelik",
     "upgradePremium": "Premium'a Yükselt",
     "subscriptionStatus": "Abonelik Durumu",
@@ -192,6 +202,7 @@
     "currency": "Para Birimi",
     "notifications": "Bildirimler",
     "notificationsOn": "Açık",
+    "notificationsOff": "Kapalı",
     "account": "Hesap",
     "deleteAccount": "Hesabımı Sil",
     "deleteAccountWarning": "Tüm verileriniz kalıcı olarak silinecektir",
@@ -204,6 +215,7 @@
     "languageChangeTitle": "Dil Değiştir",
     "languageChangeMsg": "Dil değişikliği uygulamanın yeniden başlatılmasını gerektirir.",
     "restart": "Yeniden Başlat",
+    "devReloadNotice": "Development modunda otomatik yeniden başlatma çalışmaz. Uygulamayı manuel kapatıp açın.",
     "legal": "Yasal",
     "termsOfUse": "Kullanım Koşulları (EULA)",
     "privacyPolicy": "Gizlilik Politikası",
@@ -245,6 +257,8 @@
     "exportTableEnvelope": "Zarf",
     "exportTableNote": "Not / İşyeri",
     "exportTableAmount": "Tutar",
-    "exportPdfFooter": "Zarfım Bütçe Uygulaması ile oluşturuldu • kahramanapp.com"
+    "exportPdfFooter": "Zarfım Bütçe Uygulaması ile oluşturuldu • kahramanapp.com",
+    "authRequiredTitle": "Raporlar İçin Giriş Yapın",
+    "authRequiredDesc": "Harcamalarınızı detaylı analiz etmek, grafikler ve AI içgörüleri ile bütçenizi kontrol altına almak için giriş yapın veya hesap oluşturun."
   }
 }

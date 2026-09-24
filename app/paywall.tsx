@@ -109,7 +109,7 @@ export default function PaywallScreen() {
       const success = await purchase(monthlyPackage);
       if (success) {
         Alert.alert(
-          'Hoş Geldiniz',
+          t('paywall.purchaseSuccess'),
           t('paywall.purchaseSuccessMsg'),
           [{ text: t('paywall.goBack'), onPress: () => router.back() }],
         );
@@ -126,7 +126,7 @@ export default function PaywallScreen() {
     const success = await restore();
     if (success) {
       Alert.alert(
-        'Geri Yüklendi',
+        t('paywall.restoreSuccess'),
         t('paywall.restoreSuccessMsg'),
         [{ text: t('paywall.goBack'), onPress: () => router.back() }],
       );
@@ -137,7 +137,10 @@ export default function PaywallScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent} 
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.sheetHandle} />
 
         <Pressable onPress={() => router.back()} style={styles.closeButton}>
@@ -218,7 +221,7 @@ export default function PaywallScreen() {
 
           {!isRevenueCatConfigured && (
             <View style={styles.devNote}>
-              <Text style={styles.devNoteText}>Geliştirme modu — Demo fiyat gösteriliyor.</Text>
+              <Text style={styles.devNoteText}>{t('paywall.devModeNote')}</Text>
             </View>
           )}
         </View>
@@ -369,7 +372,8 @@ const styles = StyleSheet.create({
     color: '#8E8E93',
   },
   ctaContainer: {
-    alignItems: 'center',
+    width: '100%',
+    alignItems: 'stretch',
     marginBottom: Spacing.xl,
   },
   ctaButton: {
@@ -378,7 +382,7 @@ const styles = StyleSheet.create({
   },
   retryContainer: {
     width: '100%',
-    alignItems: 'center',
+    alignItems: 'stretch',
     gap: Spacing.sm,
   },
   retryText: {
@@ -397,6 +401,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   restoreButton: {
+    alignSelf: 'center',
     marginTop: Spacing.lg,
     padding: Spacing.sm,
   },
@@ -406,6 +411,7 @@ const styles = StyleSheet.create({
     color: '#8E8E93',
   },
   devNote: {
+    alignSelf: 'center',
     marginTop: Spacing.md,
     padding: Spacing.sm,
     backgroundColor: 'rgba(255, 255, 255, 0.04)',

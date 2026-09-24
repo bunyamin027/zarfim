@@ -14,6 +14,9 @@ import * as WebBrowser from 'expo-web-browser';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Crypto from 'expo-crypto';
 import { makeRedirectUri } from 'expo-auth-session';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const GUEST_KEY = '@zarfim_is_guest';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -33,6 +36,7 @@ interface AuthState {
   signOut: () => Promise<void>;
   deleteAccount: () => Promise<void>;
   clearError: () => void;
+  continueAsGuest: () => void;
 }
 
 const handleAuthUrl = async (
@@ -83,10 +87,26 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   session: null,
   isLoading: true,
-  isAuthenticated: false,
+  isAuthenticated: true,
   error: null,
 
+  continueAsGuest: () => {
+    AsyncStorage.setItem(GUEST_KEY, 'true').catch(() => {});
+    set({
+      user: null,
+      session: null,
+      isAuthenticated: true,
+      error: null,
+    });
+  },
+
   initialize: async () => {
+    let isGuest = true;
+    try {
+      const val = await AsyncStorage.getItem(GUEST_KEY);
+      if (val === 'false') isGuest = false;
+    } catch {}
+
     if (!isSupabaseConfigured) {
       set({
         isLoading: false,
@@ -101,22 +121,29 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       if (error) throw error;
 
+      if (session) {
+        AsyncStorage.removeItem(GUEST_KEY).catch(() => {});
+      }
+
       set({
         session,
         user: session?.user ?? null,
-        isAuthenticated: !!session,
+        isAuthenticated: !!session || isGuest,
         isLoading: false,
       });
 
       supabase.auth.onAuthStateChange((_event, session) => {
+        if (session) {
+          AsyncStorage.removeItem(GUEST_KEY).catch(() => {});
+        }
         set({
           session,
           user: session?.user ?? null,
-          isAuthenticated: !!session,
+          isAuthenticated: !!session || isGuest,
         });
       });
     } catch (error) {
-      set({ isLoading: false, error: (error as AuthError).message });
+      set({ isLoading: false, isAuthenticated: isGuest, error: (error as AuthError).message });
     }
   },
 
@@ -290,6 +317,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   signOut: async () => {
     set({ isLoading: true, error: null });
     try {
+      await AsyncStorage.removeItem(GUEST_KEY).catch(() => {});
       if (isSupabaseConfigured) {
         const { error } = await supabase.auth.signOut();
         if (error) throw error;

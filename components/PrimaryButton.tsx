@@ -52,11 +52,31 @@ export default function PrimaryButton({
     }).start();
   };
 
+  const containerStyle: ViewStyle = {};
+  if (style) {
+    if ('width' in style) containerStyle.width = style.width;
+    if ('maxWidth' in style) containerStyle.maxWidth = style.maxWidth;
+    if ('alignSelf' in style) containerStyle.alignSelf = style.alignSelf;
+    if ('margin' in style) containerStyle.margin = style.margin;
+    if ('marginTop' in style) containerStyle.marginTop = style.marginTop;
+    if ('marginBottom' in style) containerStyle.marginBottom = style.marginBottom;
+    if ('marginLeft' in style) containerStyle.marginLeft = style.marginLeft;
+    if ('marginRight' in style) containerStyle.marginRight = style.marginRight;
+    if ('marginHorizontal' in style) containerStyle.marginHorizontal = style.marginHorizontal;
+  }
+
+  const isFullWidth =
+    style &&
+    (('width' in style && (style.width === '100%' || style.width === 'auto')) ||
+      ('alignSelf' in style && style.alignSelf === 'stretch'));
+
   return (
     <Animated.View
       style={[
         { transform: [{ scale: scaleAnim }] },
         disabled && styles.disabledContainer,
+        isFullWidth && styles.fullWidth,
+        containerStyle,
       ]}
     >
       <Pressable
@@ -84,6 +104,13 @@ export default function PrimaryButton({
 }
 
 const styles = StyleSheet.create({
+  fullWidth: {
+    width: '100%',
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
   button: {
     backgroundColor: Colors.stamp,
     paddingVertical: Spacing.md,
@@ -104,6 +131,7 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.md,
     color: Colors.paper,
     letterSpacing: 0.3,
+    textAlign: 'center',
   },
 
   iconContainer: {

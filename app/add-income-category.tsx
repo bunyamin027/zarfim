@@ -84,7 +84,7 @@ export default function AddIncomeCategoryModal() {
           <Pressable onPress={() => router.back()} style={styles.closeButton}>
             <Ionicons name="close" size={20} color={Colors.paper} />
           </Pressable>
-          <Text style={styles.title}>Gelir Kategorisi Oluştur</Text>
+          <Text style={styles.title}>{t('addIncomeCategoryModal.title')}</Text>
           <View style={{ width: 36 }} />
         </View>
 
