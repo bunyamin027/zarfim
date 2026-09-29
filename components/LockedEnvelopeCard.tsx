@@ -2,11 +2,10 @@
  * LockedEnvelopeCard — Premium teaser kartı (i18n destekli)
  * Modern minimalist tasarım, sıfır emoji
  */
-import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { BorderRadius, Colors, Fonts, FontSizes, Shadows, Spacing } from '@/lib/theme';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Colors, Fonts, FontSizes, Spacing, BorderRadius, Shadows } from '@/lib/theme';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import AppIcon from './AppIcon';
 
 interface LockedEnvelopeCardProps {
