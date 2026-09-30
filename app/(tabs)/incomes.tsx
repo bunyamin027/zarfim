@@ -158,6 +158,7 @@ export default function IncomesScreen() {
           icon="add-outline"
           onPress={() => router.push('/add-income' as any)}
           style={styles.addButton}
+          variant="sage"
         />
       </View>
     </SafeAreaView>

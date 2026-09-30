@@ -23,6 +23,7 @@ import { isRevenueCatConfigured, getMockPriceString } from '@/lib/revenuecat';
 import { useSubscriptionStore } from '@/store/subscription';
 import PrimaryButton from '@/components/PrimaryButton';
 import AppIcon from '@/components/AppIcon';
+import { logPaywallViewed, logPurchaseCompleted } from '@/lib/analytics';
 
 const FEATURE_KEYS = [
   { icon: 'mail-outline', titleKey: 'paywall.features.unlimitedEnvelopes', descKey: 'paywall.features.unlimitedEnvelopesDesc' },
@@ -56,6 +57,7 @@ export default function PaywallScreen() {
   // Initial load: check subscription + fetch offerings
   useEffect(() => {
     checkSubscription();
+    logPaywallViewed('paywall_screen');
   }, []);
 
   // Auto-retry offerings if they fail on first load (up to MAX_OFFERING_RETRIES)
@@ -108,6 +110,11 @@ export default function PaywallScreen() {
       clearError();
       const success = await purchase(monthlyPackage);
       if (success) {
+        logPurchaseCompleted(
+          monthlyPackage.identifier,
+          monthlyPackage.product?.price,
+          monthlyPackage.product?.currencyCode
+        );
         Alert.alert(
           t('paywall.purchaseSuccess'),
           t('paywall.purchaseSuccessMsg'),

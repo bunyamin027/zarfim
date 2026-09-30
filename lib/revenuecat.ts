@@ -10,6 +10,7 @@
  * mock veri döndürür.
  */
 import { Platform } from 'react-native';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 
 // Lazy import — web'de ve Expo Go'da crash engelleme
 let Purchases: typeof import('react-native-purchases').default | null = null;
@@ -21,11 +22,26 @@ try {
   Purchases = null;
 }
 
-const iosKey = process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY || process.env.EXPO_PUBLIC_REVENUECAT_APPLE_KEY || '';
-const androidKey = process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_KEY || process.env.EXPO_PUBLIC_REVENUECAT_GOOGLE_KEY || '';
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+
+const isValidKey = (key: string) =>
+  !!key && !key.includes('XXXX') && key !== 'placeholder';
+
+const rawIosKey = process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY || process.env.EXPO_PUBLIC_REVENUECAT_APPLE_KEY || '';
+const rawAndroidKey = process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_KEY || process.env.EXPO_PUBLIC_REVENUECAT_GOOGLE_KEY || '';
+
+// Expo Go sadece 'test_' ile başlayan Test Store anahtarlarını destekler
+const isKeySupportedInEnvironment = (key: string) => {
+  if (!isValidKey(key)) return false;
+  if (isExpoGo && !key.startsWith('test_')) return false;
+  return true;
+};
+
+const iosKey = isKeySupportedInEnvironment(rawIosKey) ? rawIosKey : '';
+const androidKey = isKeySupportedInEnvironment(rawAndroidKey) ? rawAndroidKey : '';
 
 export const isRevenueCatConfigured =
-  !!Purchases && (!!iosKey || !!androidKey);
+  !isExpoGo && !!Purchases && (!!iosKey || !!androidKey);
 
 // ─── Ürün tanımları ──────────────────────────────
 export const PRODUCT_ID = 'zarfim_premium_monthly';

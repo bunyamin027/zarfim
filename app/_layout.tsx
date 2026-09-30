@@ -28,6 +28,7 @@ import { useAuthStore } from '@/store/auth';
 import { configureRevenueCat } from '@/lib/revenuecat';
 import { useSubscriptionStore } from '@/store/subscription';
 import { initializeLanguage } from '@/lib/i18n';
+import { logScreenView } from '@/lib/analytics';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -102,6 +103,13 @@ function RootLayoutNav() {
       router.replace('/');
     }
   }, [isAuthenticated, user, segments]);
+
+  useEffect(() => {
+    if (segments && segments.length > 0) {
+      const screenPath = segments.join('/');
+      logScreenView(screenPath);
+    }
+  }, [segments]);
 
   return (
     <Stack

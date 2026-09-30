@@ -25,6 +25,7 @@ import { useEnvelopesStore } from '@/store/envelopes';
 import { useIncomeCategories } from '@/lib/hooks/useEnvelopes';
 import { queryClient } from '@/lib/queryClient';
 import { getCurrencySymbol } from '@/lib/formatCurrency';
+import { logIncomeAdded } from '@/lib/analytics';
 
 export default function AddIncomeModal() {
   const { t } = useTranslation();
@@ -54,6 +55,9 @@ export default function AddIncomeModal() {
         note: note.trim() || null,
         occurred_at: new Date().toISOString(),
       });
+
+      const selectedCat = categories?.find((c) => c.id === selectedId);
+      logIncomeAdded(numericAmount, selectedCat?.name);
 
       await queryClient.invalidateQueries({ queryKey: ['incomes'] });
       await queryClient.invalidateQueries({ queryKey: ['envelopes'] });
@@ -144,6 +148,7 @@ export default function AddIncomeModal() {
               icon="add-outline"
               onPress={handleSubmit}
               disabled={isSubmitting || !amount}
+              variant="sage"
             />
           </View>
         </ScrollView>

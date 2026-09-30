@@ -22,6 +22,7 @@ interface PrimaryButtonProps {
   style?: ViewStyle;
   textStyle?: TextStyle;
   icon?: string | React.ReactNode;
+  variant?: 'stamp' | 'sage' | 'gold';
 }
 
 export default function PrimaryButton({
@@ -31,6 +32,7 @@ export default function PrimaryButton({
   style,
   textStyle,
   icon,
+  variant = 'stamp',
 }: PrimaryButtonProps) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -84,7 +86,13 @@ export default function PrimaryButton({
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         disabled={disabled}
-        style={[styles.button, disabled && styles.disabledButton, style]}
+        style={[
+          styles.button,
+          variant === 'sage' && styles.sageButton,
+          variant === 'gold' && styles.goldButton,
+          disabled && styles.disabledButton,
+          style,
+        ]}
       >
         {typeof icon === 'string' ? (
           <View style={styles.iconContainer}>
@@ -124,6 +132,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 3,
+  },
+
+  sageButton: {
+    backgroundColor: Colors.sage,
+    shadowColor: Colors.sage,
+  },
+
+  goldButton: {
+    backgroundColor: Colors.gold,
+    shadowColor: Colors.gold,
   },
 
   text: {

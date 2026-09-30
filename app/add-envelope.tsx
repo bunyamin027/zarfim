@@ -26,6 +26,7 @@ import { useEnvelopes } from '@/lib/hooks/useEnvelopes';
 import { useSubscriptionStore } from '@/store/subscription';
 import { queryClient } from '@/lib/queryClient';
 import { getCurrencySymbol } from '@/lib/formatCurrency';
+import { logEnvelopeCreated } from '@/lib/analytics';
 
 const PRESET_ICONS = [
   'cart-outline',
@@ -109,6 +110,7 @@ export default function AddEnvelopeModal() {
           color,
           is_recurring: true,
         });
+        logEnvelopeCreated(name.trim(), numericLimit);
       }
 
       await queryClient.invalidateQueries({ queryKey: ['envelopes'] });

@@ -144,6 +144,7 @@ export default function AddIncomeCategoryModal() {
               icon="add-outline"
               onPress={handleSubmit}
               disabled={isSubmitting || !name}
+              variant="sage"
             />
           </View>
         </ScrollView>

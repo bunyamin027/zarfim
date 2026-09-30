@@ -25,6 +25,7 @@ import { useEnvelopesStore } from '@/store/envelopes';
 import { useEnvelopes, useMonthlyStats } from '@/lib/hooks/useEnvelopes';
 import { queryClient } from '@/lib/queryClient';
 import { getCurrencySymbol } from '@/lib/formatCurrency';
+import { logExpenseAdded } from '@/lib/analytics';
 
 export default function AddExpenseModal() {
   const { t } = useTranslation();
@@ -71,6 +72,9 @@ export default function AddExpenseModal() {
         note: note.trim() || null,
         occurred_at: new Date().toISOString(),
       });
+
+      const selectedEnv = envelopes?.find((e) => e.id === selectedId);
+      logExpenseAdded(numericAmount, selectedEnv?.name);
 
       await queryClient.invalidateQueries({ queryKey: ['envelopes'] });
       await queryClient.invalidateQueries({ queryKey: ['transactions'] });
