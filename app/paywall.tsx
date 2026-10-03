@@ -12,6 +12,7 @@ import {
   Pressable,
   ActivityIndicator,
   Alert,
+  Platform,
 } from 'react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
@@ -234,7 +235,13 @@ export default function PaywallScreen() {
         </View>
 
         <View style={styles.legalContainer}>
-          <Text style={styles.legal}>{t('paywall.legal')}</Text>
+          <Text style={styles.legal}>
+            {Platform.OS === 'ios'
+              ? t('paywall.legalIos')
+              : Platform.OS === 'android'
+              ? t('paywall.legalAndroid')
+              : t('paywall.legal')}
+          </Text>
           <View style={styles.legalLinks}>
             <Pressable onPress={() => WebBrowser.openBrowserAsync('https://kahramanapp.com/privacy')}>
               <Text style={styles.legalLink}>{t('settings.privacyPolicy')}</Text>

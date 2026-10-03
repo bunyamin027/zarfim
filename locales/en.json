@@ -170,7 +170,9 @@
     "goBack": "Back to My Envelopes",
     "restoreSuccess": "Restored",
     "restoreSuccessMsg": "Your Premium membership has been restored!",
-    "legal": "Subscription is billed through your Apple ID / Google Play account. It automatically renews unless canceled at least 24 hours before the end of the current period.",
+    "legal": "Subscription is billed through your store account. It automatically renews unless canceled at least 24 hours before the end of the current period.",
+    "legalIos": "Subscription is billed through your Apple ID account. It automatically renews unless canceled at least 24 hours before the end of the current period.",
+    "legalAndroid": "Subscription is billed through your Google Play account. It automatically renews unless canceled at least 24 hours before the end of the current period.",
     "features": {
       "unlimitedEnvelopes": "Unlimited Envelopes",
       "unlimitedEnvelopesDesc": "Remove the 3-envelope limit, create as many categories as you want",

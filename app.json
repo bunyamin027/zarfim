@@ -2,7 +2,7 @@
   "expo": {
     "name": "Zarfım",
     "slug": "zarfim",
-    "version": "1.0.1",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "zarfim",
@@ -18,7 +18,7 @@
       "appleTeamId": "ZS89AATCJ2",
       "googleServicesFile": "./GoogleService-Info.plist",
       "usesAppleSignIn": true,
-      "buildNumber": "6",
+      "buildNumber": "8",
       "splash": {
         "backgroundColor": "#1C2541",
         "image": "./assets/images/splash-icon.png",
@@ -38,7 +38,7 @@
         "resizeMode": "contain"
       },
       "package": "com.zarfim.app",
-      "versionCode": 6,
+      "versionCode": 8,
       "predictiveBackGestureEnabled": false
     },
     "web": {
