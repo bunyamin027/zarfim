@@ -1,0 +1,37 @@
+{
+  "project_info": {
+    "project_number": "1073370883652",
+    "project_id": "zarfim-8374f",
+    "storage_bucket": "zarfim-8374f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1073370883652:android:d2c96b8339304217d2fe11",
+        "android_client_info": {
+          "package_name": "com.zarfim.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiQM46S26ccD3qg-66xGYlp4qTyM7EniE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
+
