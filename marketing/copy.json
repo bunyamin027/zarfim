@@ -1,0 +1,458 @@
+{
+ "tr": {
+  "slides": [
+   {
+    "eyebrow": "ZARF USULÜ BÜTÇE",
+    "title": "Her kuruşun bir *zarfı* olsun.",
+    "sub": "Gelirini zarflara böl, ay sonunu rahat getir.",
+    "chips": [
+     [
+      "✉️",
+      "6 akıllı zarf"
+     ],
+     [
+      "💚",
+      "Anlık bakiye"
+     ]
+    ],
+    "shot": "01-home"
+   },
+   {
+    "eyebrow": "3 SANİYEDE KAYIT",
+    "title": "Harcamayı *anında* ekle.",
+    "sub": "Tutarı yaz, zarfı seç, bitti.",
+    "chips": [
+     [
+      "⚡",
+      "Hızlı giriş"
+     ],
+     [
+      "🔔",
+      "Limit uyarısı"
+     ]
+    ],
+    "shot": "02-add-expense"
+   },
+   {
+    "eyebrow": "ZARF DETAYI",
+    "title": "Paran nereye *gitti?*",
+    "sub": "Her zarfın işlem geçmişi tek ekranda.",
+    "chips": [
+     [
+      "🧾",
+      "Tüm işlemler"
+     ],
+     [
+      "📈",
+      "Canlı ilerleme"
+     ]
+    ],
+    "shot": "03-envelope"
+   },
+   {
+    "eyebrow": "GELİR TAKİBİ",
+    "title": "Gelirini *büyüt*, takip et.",
+    "sub": "Maaş, serbest iş, kira — hepsi kategorili.",
+    "chips": [
+     [
+      "💰",
+      "Net bakiye"
+     ],
+     [
+      "🏷️",
+      "Gelir kategorileri"
+     ]
+    ],
+    "shot": "04-incomes"
+   },
+   {
+    "eyebrow": "GÖRSEL RAPORLAR",
+    "title": "Bütçeni *bir bakışta* gör.",
+    "sub": "Şık grafiklerle harcama dağılımın.",
+    "chips": [
+     [
+      "📊",
+      "Kategori analizi"
+     ],
+     [
+      "📄",
+      "PDF dışa aktar"
+     ]
+    ],
+    "shot": "05-reports"
+   },
+   {
+    "eyebrow": "TÜM GİDERLER",
+    "title": "Hiçbir harcama *kaçmasın.*",
+    "sub": "Bütün giderlerin tarihe göre listede.",
+    "chips": [
+     [
+      "🗂️",
+      "Düzenli liste"
+     ],
+     [
+      "👆",
+      "Kaydır & sil"
+     ]
+    ],
+    "shot": "06-expenses"
+   },
+   {
+    "eyebrow": "SINIRSIZ ÖZELLEŞTİR",
+    "title": "Zarfını *kendin* tasarla.",
+    "sub": "İkon, renk ve aylık limit senin seçimin.",
+    "chips": [
+     [
+      "🎨",
+      "Renkler"
+     ],
+     [
+      "✨",
+      "İkonlar"
+     ]
+    ],
+    "shot": "07-new-envelope"
+   },
+   {
+    "eyebrow": "ÇOKLU PARA BİRİMİ",
+    "title": "₺, $, €, ﷼ — *hepsi* hazır.",
+    "sub": "Dilini ve para birimini tek dokunuşla değiştir.",
+    "chips": [
+     [
+      "🌍",
+      "3 dil"
+     ],
+     [
+      "💱",
+      "6 para birimi"
+     ]
+    ],
+    "shot": "08-settings"
+   },
+   {
+    "eyebrow": "TÜRKÇE • ENGLISH • العربية",
+    "title": "Kendi dilinde *bütçe.*",
+    "sub": "Tam sağdan sola Arapça desteğiyle.",
+    "chips": [],
+    "shots": [
+     [
+      "en",
+      "01-home"
+     ],
+     [
+      "tr",
+      "01-home"
+     ],
+     [
+      "ar",
+      "01-home"
+     ]
+    ]
+   }
+  ]
+ },
+ "en": {
+  "slides": [
+   {
+    "eyebrow": "ENVELOPE BUDGETING",
+    "title": "Give every dollar an *envelope.*",
+    "sub": "Split your income, end the month with savings.",
+    "chips": [
+     [
+      "✉️",
+      "6 smart envelopes"
+     ],
+     [
+      "💚",
+      "Live balance"
+     ]
+    ],
+    "shot": "01-home"
+   },
+   {
+    "eyebrow": "LOG IN 3 SECONDS",
+    "title": "Add expenses *instantly.*",
+    "sub": "Type the amount, pick an envelope, done.",
+    "chips": [
+     [
+      "⚡",
+      "Quick entry"
+     ],
+     [
+      "🔔",
+      "Limit alerts"
+     ]
+    ],
+    "shot": "02-add-expense"
+   },
+   {
+    "eyebrow": "ENVELOPE DETAILS",
+    "title": "Where did your *money go?*",
+    "sub": "Every envelope's history in one place.",
+    "chips": [
+     [
+      "🧾",
+      "All transactions"
+     ],
+     [
+      "📈",
+      "Live progress"
+     ]
+    ],
+    "shot": "03-envelope"
+   },
+   {
+    "eyebrow": "INCOME TRACKING",
+    "title": "Track every *paycheck.*",
+    "sub": "Salary, freelance, side hustle — organized.",
+    "chips": [
+     [
+      "💰",
+      "Net balance"
+     ],
+     [
+      "🏷️",
+      "Income categories"
+     ]
+    ],
+    "shot": "04-incomes"
+   },
+   {
+    "eyebrow": "VISUAL REPORTS",
+    "title": "Your budget *at a glance.*",
+    "sub": "Beautiful charts of where you spend.",
+    "chips": [
+     [
+      "📊",
+      "Category insights"
+     ],
+     [
+      "📄",
+      "Export PDF"
+     ]
+    ],
+    "shot": "05-reports"
+   },
+   {
+    "eyebrow": "ALL EXPENSES",
+    "title": "Never miss a *single* expense.",
+    "sub": "Every purchase, neatly organized by date.",
+    "chips": [
+     [
+      "🗂️",
+      "Clean list"
+     ],
+     [
+      "👆",
+      "Swipe to delete"
+     ]
+    ],
+    "shot": "06-expenses"
+   },
+   {
+    "eyebrow": "MAKE IT YOURS",
+    "title": "Design your *own* envelopes.",
+    "sub": "Pick icons, colors and monthly limits.",
+    "chips": [
+     [
+      "🎨",
+      "Colors"
+     ],
+     [
+      "✨",
+      "Icons"
+     ]
+    ],
+    "shot": "07-new-envelope"
+   },
+   {
+    "eyebrow": "MULTI-CURRENCY",
+    "title": "$, €, £, ₺ — *all* supported.",
+    "sub": "Switch language and currency in one tap.",
+    "chips": [
+     [
+      "🌍",
+      "3 languages"
+     ],
+     [
+      "💱",
+      "6 currencies"
+     ]
+    ],
+    "shot": "08-settings"
+   },
+   {
+    "eyebrow": "ENGLISH • TÜRKÇE • العربية",
+    "title": "Budget in *your* language.",
+    "sub": "Including full right-to-left Arabic.",
+    "chips": [],
+    "shots": [
+     [
+      "tr",
+      "01-home"
+     ],
+     [
+      "en",
+      "01-home"
+     ],
+     [
+      "ar",
+      "01-home"
+     ]
+    ]
+   }
+  ]
+ },
+ "ar": {
+  "slides": [
+   {
+    "eyebrow": "ميزانية الظروف",
+    "title": "لكل ريال *ظرفه* الخاص.",
+    "sub": "قسّم دخلك وأنهِ الشهر بمدخرات.",
+    "chips": [
+     [
+      "✉️",
+      "٦ ظروف ذكية"
+     ],
+     [
+      "💚",
+      "رصيد لحظي"
+     ]
+    ],
+    "shot": "01-home"
+   },
+   {
+    "eyebrow": "سجّل في ٣ ثوانٍ",
+    "title": "أضف مصاريفك *فوراً.*",
+    "sub": "اكتب المبلغ، اختر الظرف، وانتهى.",
+    "chips": [
+     [
+      "⚡",
+      "إدخال سريع"
+     ],
+     [
+      "🔔",
+      "تنبيه الحد"
+     ]
+    ],
+    "shot": "02-add-expense"
+   },
+   {
+    "eyebrow": "تفاصيل الظرف",
+    "title": "أين ذهبت *أموالك؟*",
+    "sub": "سجل كل ظرف في مكان واحد.",
+    "chips": [
+     [
+      "🧾",
+      "كل العمليات"
+     ],
+     [
+      "📈",
+      "تقدّم مباشر"
+     ]
+    ],
+    "shot": "03-envelope"
+   },
+   {
+    "eyebrow": "تتبّع الدخل",
+    "title": "تابع *كل* دخلك.",
+    "sub": "الراتب، العمل الحر، الإيجار — منظم.",
+    "chips": [
+     [
+      "💰",
+      "الرصيد الصافي"
+     ],
+     [
+      "🏷️",
+      "فئات الدخل"
+     ]
+    ],
+    "shot": "04-incomes"
+   },
+   {
+    "eyebrow": "تقارير مرئية",
+    "title": "ميزانيتك *بنظرة واحدة.*",
+    "sub": "رسوم بيانية أنيقة لمصاريفك.",
+    "chips": [
+     [
+      "📊",
+      "تحليل الفئات"
+     ],
+     [
+      "📄",
+      "تصدير PDF"
+     ]
+    ],
+    "shot": "05-reports"
+   },
+   {
+    "eyebrow": "كل المصاريف",
+    "title": "لا يفوتك *أي* مصروف.",
+    "sub": "كل مشترياتك مرتبة حسب التاريخ.",
+    "chips": [
+     [
+      "🗂️",
+      "قائمة منظمة"
+     ],
+     [
+      "👆",
+      "اسحب للحذف"
+     ]
+    ],
+    "shot": "06-expenses"
+   },
+   {
+    "eyebrow": "خصّصه كما تريد",
+    "title": "صمّم ظروفك *بنفسك.*",
+    "sub": "اختر الأيقونة واللون والحد الشهري.",
+    "chips": [
+     [
+      "🎨",
+      "ألوان"
+     ],
+     [
+      "✨",
+      "أيقونات"
+     ]
+    ],
+    "shot": "07-new-envelope"
+   },
+   {
+    "eyebrow": "عملات متعددة",
+    "title": "﷼، د.إ، $، € — *كلها* مدعومة.",
+    "sub": "غيّر اللغة والعملة بلمسة واحدة.",
+    "chips": [
+     [
+      "🌍",
+      "٣ لغات"
+     ],
+     [
+      "💱",
+      "٦ عملات"
+     ]
+    ],
+    "shot": "08-settings"
+   },
+   {
+    "eyebrow": "العربية • English • Türkçe",
+    "title": "ميزانيتك *بلغتك.*",
+    "sub": "دعم كامل للعربية من اليمين لليسار.",
+    "chips": [],
+    "shots": [
+     [
+      "tr",
+      "01-home"
+     ],
+     [
+      "ar",
+      "01-home"
+     ],
+     [
+      "en",
+      "01-home"
+     ]
+    ]
+   }
+  ]
+ }
+}

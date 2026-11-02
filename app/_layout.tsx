@@ -13,7 +13,7 @@ import {
   Manrope_700Bold,
 } from '@expo-google-fonts/manrope';
 import { useFonts } from 'expo-font';
-import { Stack, useRouter, useSegments } from 'expo-router';
+import { Stack, useRouter, useSegments, router as globalRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -29,6 +29,7 @@ import { configureRevenueCat } from '@/lib/revenuecat';
 import { useSubscriptionStore } from '@/store/subscription';
 import { initializeLanguage } from '@/lib/i18n';
 import { logScreenView } from '@/lib/analytics';
+import { isScreenshotMode, seedScreenshotData, getShotRoute } from '@/lib/screenshotSeed';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -65,14 +66,20 @@ export default function RootLayout() {
   // Auth ve dil state'lerini başlat
   useEffect(() => {
     initialize();
-    initializeLanguage();
+    initializeLanguage().then(() => {
+      if (isScreenshotMode) setTimeout(() => {
+        seedScreenshotData();
+        const r = getShotRoute();
+        if (r) setTimeout(() => globalRouter.push(('/' + r) as any), 800);
+      }, 300);
+    });
   }, []);
 
   // Auth başarılı olunca RevenueCat'i başlat ve abonelik kontrol et
   useEffect(() => {
     if (isAuthenticated) {
       configureRevenueCat(user?.id);
-      checkSubscription();
+      if (!isScreenshotMode) checkSubscription();
     }
   }, [isAuthenticated]);
 

@@ -1,6 +1,7 @@
 /**
  * Raporlar Ekranı — Grafik ve İstatistikler (Victory Native XL + PDF/CSV Dışa Aktarma)
  */
+import { isScreenshotMode } from '@/lib/screenshotSeed';
 import React, { useMemo, useState } from 'react';
 import {
   View,
@@ -243,7 +244,7 @@ export default function ReportsScreen() {
     }
   };
 
-  if (!user) {
+  if (!user && !isScreenshotMode) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>

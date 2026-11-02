@@ -49,3 +49,7 @@ yarn-error.*
 build/
 .idea/
 
+
+# Üretilmiş mağaza görselleri/videoları (marketing/*.py ile yeniden üretilir)
+marketing/out/
+marketing/__pycache__/
