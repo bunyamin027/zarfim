@@ -68,7 +68,16 @@
         }
       ],
       "expo-web-browser",
-      "@react-native-firebase/app"
+      "@react-native-firebase/app",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
+      "./plugins/withRNFirebasePodfile"
     ],
     "experiments": {
       "typedRoutes": true,
