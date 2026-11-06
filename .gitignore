@@ -53,3 +53,9 @@ build/
 # Üretilmiş mağaza görselleri/videoları (marketing/*.py ile yeniden üretilir)
 marketing/out/
 marketing/__pycache__/
+
+# Sürüm dosyaları (aab, mapping, xcarchive) — repoya girmez, GitHub 100MB sınırını da aşar
+builds/
+
+# macOS'un harici (exFAT) diskte oluşturduğu AppleDouble dosyaları
+._*

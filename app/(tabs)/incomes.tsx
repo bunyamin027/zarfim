@@ -8,9 +8,9 @@ import {
   Text,
   FlatList,
   StyleSheet,
-  SafeAreaView,
   Pressable,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Colors, Fonts, FontSizes, Spacing, BorderRadius } from '@/lib/theme';
@@ -70,7 +70,7 @@ export default function IncomesScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <FlatList
         data={incomes}
         keyExtractor={(item) => item.id}

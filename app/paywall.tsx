@@ -8,12 +8,12 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   Pressable,
   ActivityIndicator,
   Alert,
   Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -87,7 +87,8 @@ export default function PaywallScreen() {
 
   const offering = currentOffering;
   const monthlyPackage = offering?.monthly || offering?.availablePackages?.[0];
-  const priceString = monthlyPackage?.product?.priceString || getMockPriceString();
+  const priceString = monthlyPackage?.product?.priceString
+    ?? (isRevenueCatConfigured ? '—' : getMockPriceString());
 
   const handleRetryOfferings = () => {
     setOfferingsRetryCount(0);

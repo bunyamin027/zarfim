@@ -7,10 +7,10 @@ import {
   Text,
   FlatList,
   StyleSheet,
-  SafeAreaView,
   ActivityIndicator,
   Pressable,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Colors, Fonts, FontSizes, Spacing } from '@/lib/theme';
@@ -84,7 +84,7 @@ export default function DashboardScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <FlatList
         data={displayEnvelopes as any[]}
         keyExtractor={(item: any) => item.id}
@@ -92,7 +92,7 @@ export default function DashboardScreen() {
         ListHeaderComponent={
           <View style={styles.header}>
             <View style={styles.titleRow}>
-              <Pressable onPress={handleLogoTap}>
+              <Pressable onPress={handleLogoTap} style={styles.titlePress}>
                 <Text style={styles.title}>{t('dashboard.title')}</Text>
               </Pressable>
               <Text style={styles.month}>{currentMonth}</Text>
@@ -211,6 +211,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     marginBottom: Spacing.sm,
   },
+  // Android: metin kutusu metinle aynı genişlikteyken son harf kırpılabiliyor
+  // (ör. Samsung kalın yazı / büyük yazı ayarı). Kutuyu esnetmek görünümü değiştirmeden bunu önler.
+  titlePress: {
+    flex: 1,
+  },
   title: {
     fontFamily: Fonts.display,
     fontSize: FontSizes.xxl,
@@ -255,11 +260,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   summaryValue: {
+    alignSelf: 'stretch',
+    textAlign: 'center',
     fontFamily: Fonts.bodySemiBold,
     fontSize: FontSizes.md,
     color: Colors.paper,
   },
   summaryLabel: {
+    alignSelf: 'stretch',
+    textAlign: 'center',
     fontFamily: Fonts.body,
     fontSize: FontSizes.xs,
     color: Colors.paperDark,
@@ -279,6 +288,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   sectionTitle: {
+    flex: 1,
     fontFamily: Fonts.displayMedium,
     fontSize: FontSizes.xl,
     color: Colors.paper,

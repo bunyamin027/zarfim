@@ -2,19 +2,19 @@
  * Ayarlar Ekranı — Zarfım (i18n destekli + dil değiştirme)
  * Modern minimalist tasarım, sıfır emoji, vektör ikonlar
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   Pressable,
   Alert,
   ActivityIndicator,
   Modal,
   Linking,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,7 +23,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { Colors, Fonts, FontSizes, Spacing, BorderRadius } from '@/lib/theme';
 import { useAuthStore } from '@/store/auth';
 import { useSubscriptionStore } from '@/store/subscription';
-import { getMockPriceString } from '@/lib/revenuecat';
+import { getMockPriceString, isRevenueCatConfigured } from '@/lib/revenuecat';
 import AppIcon from '@/components/AppIcon';
 import {
   SUPPORTED_LANGUAGES,
@@ -78,7 +78,15 @@ export default function SettingsScreen() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const { user, signOut } = useAuthStore();
-  const { isPremium, isLoading, error, restore, clearError } = useSubscriptionStore();
+  const { isPremium, isLoading, error, restore, clearError, currentOffering, fetchOfferings } = useSubscriptionStore();
+
+  // Fiyatı mağazadan (Google Play / App Store) al — kullanıcının ülkesine göre doğru para birimi
+  useEffect(() => {
+    if (isRevenueCatConfigured && !currentOffering) fetchOfferings();
+  }, []);
+  const storePackage = currentOffering?.monthly || currentOffering?.availablePackages?.[0];
+  const premiumPrice = storePackage?.product?.priceString
+    ?? (isRevenueCatConfigured ? undefined : getMockPriceString());
   const [showLanguagePicker, setShowLanguagePicker] = useState(false);
   const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -179,7 +187,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>{t('settings.title')}</Text>
 
@@ -234,7 +242,7 @@ export default function SettingsScreen() {
           <SettingsRow
             icon="star-outline"
             title={t('settings.upgradePremium')}
-            value={getMockPriceString()}
+            value={premiumPrice}
             onPress={() => router.push('/paywall')}
           />
         )}

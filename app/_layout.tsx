@@ -26,6 +26,7 @@ import { Colors } from '@/lib/theme';
 import { queryClient } from '@/lib/queryClient';
 import { useAuthStore } from '@/store/auth';
 import { configureRevenueCat } from '@/lib/revenuecat';
+import { showLaunchInterstitial } from '@/lib/ads';
 import { useSubscriptionStore } from '@/store/subscription';
 import { initializeLanguage } from '@/lib/i18n';
 import { logScreenView } from '@/lib/analytics';
@@ -79,7 +80,12 @@ export default function RootLayout() {
   useEffect(() => {
     if (isAuthenticated) {
       configureRevenueCat(user?.id);
-      if (!isScreenshotMode) checkSubscription();
+      if (!isScreenshotMode) {
+        // Abonelik kontrolü bittikten sonra premium değilse açılış reklamı
+        checkSubscription().then(() => {
+          if (!useSubscriptionStore.getState().isPremium) showLaunchInterstitial();
+        });
+      }
     }
   }, [isAuthenticated]);
 

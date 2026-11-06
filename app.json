@@ -2,7 +2,7 @@
   "expo": {
     "name": "Zarfım",
     "slug": "zarfim",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "zarfim",
@@ -18,7 +18,10 @@
       "appleTeamId": "ZS89AATCJ2",
       "googleServicesFile": "./GoogleService-Info.plist",
       "usesAppleSignIn": true,
-      "buildNumber": "9",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "buildNumber": "12",
       "splash": {
         "backgroundColor": "#1C2541",
         "image": "./assets/images/splash-icon.png",
@@ -39,7 +42,7 @@
         "resizeMode": "contain"
       },
       "package": "com.zarfim.app",
-      "versionCode": 9,
+      "versionCode": 12,
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -74,10 +77,22 @@
         {
           "ios": {
             "useFrameworks": "static"
+          },
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
           }
         }
       ],
-      "./plugins/withRNFirebasePodfile"
+      "./plugins/withRNFirebasePodfile",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-6930876126004356~7179868350",
+          "iosAppId": "ca-app-pub-6930876126004356~3543875674",
+          "delayAppMeasurementInit": true
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

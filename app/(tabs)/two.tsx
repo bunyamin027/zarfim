@@ -8,10 +8,10 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import * as FileSystem from 'expo-file-system';
@@ -246,7 +246,7 @@ export default function ReportsScreen() {
 
   if (!user && !isScreenshotMode) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
         <View style={styles.header}>
           <Text style={styles.title}>{t('reports.title')}</Text>
         </View>
@@ -270,7 +270,7 @@ export default function ReportsScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
         <View style={styles.centerContent}>
           <ActivityIndicator size="large" color={Colors.stamp} />
           <Text style={styles.loadingText}>{t('common.loading')}</Text>
@@ -281,7 +281,7 @@ export default function ReportsScreen() {
 
   if (!transactions || transactions.length === 0) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
         <View style={styles.header}>
           <Text style={styles.title}>{t('reports.title')}</Text>
         </View>
@@ -295,7 +295,7 @@ export default function ReportsScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <Text style={styles.title}>{t('reports.title')}</Text>
