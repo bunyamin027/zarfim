@@ -11,9 +11,13 @@
  *   EXPO_PUBLIC_ADMOB_ANDROID_BANNER_ID       / EXPO_PUBLIC_ADMOB_IOS_BANNER_ID
  * Tanımlı değilse veya geliştirme modundaysa Google test reklamı kullanılır.
  *
+ * ATT: SDK, App Tracking Transparency izni sonuçlanmadan başlatılmaz (initAds).
+ * İzin verilirse kişiselleştirilmiş, verilmezse kişiselleştirilmemiş reklam istenir.
+ *
  * NOT: Native modül — Expo Go'da ve web'de çalışmaz, sessizce atlanır.
  */
 import { Platform } from 'react-native';
+import { requestTrackingConsent } from '@/lib/tracking';
 
 let Ads: typeof import('react-native-google-mobile-ads') | null = null;
 try {
@@ -24,6 +28,29 @@ try {
 
 export function getAdsModule() {
   return Ads;
+}
+
+let initPromise: Promise<boolean> | null = null;
+
+/**
+ * Önce ATT iznini bekler, sonra AdMob SDK'sını başlatır.
+ * Dönen değer: kişiselleştirilmiş reklam istenebilir mi (ATT izni verildi mi).
+ */
+export function initAds(): Promise<boolean> {
+  if (!initPromise) {
+    initPromise = (async () => {
+      const personalized = await requestTrackingConsent();
+      if (Ads && Platform.OS !== 'web') {
+        try {
+          await Ads.default().initialize();
+        } catch (e) {
+          console.warn('AdMob initialize error:', e);
+        }
+      }
+      return personalized;
+    })();
+  }
+  return initPromise;
 }
 
 export function getBannerUnitId(): string | null {
@@ -56,9 +83,9 @@ export async function showLaunchInterstitial(): Promise<void> {
   if (!unitId) return;
 
   try {
-    await Ads.default().initialize();
+    const personalized = await initAds();
     const ad = Ads.InterstitialAd.createForAdRequest(unitId, {
-      requestNonPersonalizedAdsOnly: true,
+      requestNonPersonalizedAdsOnly: !personalized,
     });
 
     await new Promise<void>((resolve) => {

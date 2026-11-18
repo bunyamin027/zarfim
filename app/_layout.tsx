@@ -27,6 +27,7 @@ import { queryClient } from '@/lib/queryClient';
 import { useAuthStore } from '@/store/auth';
 import { configureRevenueCat } from '@/lib/revenuecat';
 import { showLaunchInterstitial } from '@/lib/ads';
+import { requestTrackingConsent } from '@/lib/tracking';
 import { useSubscriptionStore } from '@/store/subscription';
 import { initializeLanguage } from '@/lib/i18n';
 import { logScreenView } from '@/lib/analytics';
@@ -61,6 +62,9 @@ export default function RootLayout() {
   useEffect(() => {
     if (loaded || error) {
       SplashScreen.hideAsync();
+      // ATT izni (iOS): splash kapandıktan sonra, ilk açılışta bir kez.
+      // Reklam SDK'sı bu sonuçlanmadan başlatılmaz (lib/ads.ts → initAds).
+      requestTrackingConsent();
     }
   }, [loaded, error]);
 

@@ -21,7 +21,7 @@
       "config": {
         "usesNonExemptEncryption": false
       },
-      "buildNumber": "12",
+      "buildNumber": "13",
       "splash": {
         "backgroundColor": "#1C2541",
         "image": "./assets/images/splash-icon.png",
@@ -92,8 +92,18 @@
           "iosAppId": "ca-app-pub-6930876126004356~3543875674",
           "delayAppMeasurementInit": true
         }
+      ],
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "If you allow it, you'll see ads that are more relevant to you. Ads keep the free version of Zarfım free."
+        }
       ]
     ],
+    "locales": {
+      "tr": "./locales/native/tr.json",
+      "ar": "./locales/native/ar.json"
+    },
     "experiments": {
       "typedRoutes": true,
       "tsconfigPaths": true
